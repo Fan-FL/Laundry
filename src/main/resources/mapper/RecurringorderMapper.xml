@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quoll.mapper.RecurringorderMapper">
+  <resultMap id="BaseResultMap" type="com.quoll.model.Recurringorder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="companyid" jdbcType="INTEGER" property="companyid" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="pickupdate" jdbcType="DATE" property="pickupdate" />
+    <result column="deliverdate" jdbcType="DATE" property="deliverdate" />
+    <result column="intervaldays" jdbcType="INTEGER" property="intervaldays" />
+    <result column="enddate" jdbcType="DATE" property="enddate" />
+    <result column="active" jdbcType="CHAR" property="active" />
+    <association property="company" javaType="com.quoll.model.Company">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="address" jdbcType="VARCHAR" property="address" />
+    </association>
+  </resultMap>
+  <select id="selectByIDRef" resultMap="BaseResultMap">
+    SELECT l.*, c.* FROM recurringorder l LEFT JOIN company c ON l.companyid=c.id WHERE l.id=#{orderid} AND l.active=1 ORDER BY pickupdate
+  </select>
+  <select id="selectAllRef" resultMap="BaseResultMap">
+    SELECT l.*, c.* FROM recurringorder l LEFT JOIN company c ON l.companyid=c.id WHERE l.active=1 ORDER BY pickupdate
+  </select>
+  <select id="selectRefSelective" resultMap="BaseResultMap">
+    SELECT l.*, c.* FROM recurringorder l LEFT JOIN company c ON l.companyid=c.id
+    <where>
+      <if test="record.id != null">
+        AND id = #{record.id,jdbcType=INTEGER}
+      </if>
+      <if test="record.companyid != null">
+        AND companyid = #{record.companyid,jdbcType=INTEGER}
+      </if>
+      <if test="record.address != null">
+        AND address = #{record.address,jdbcType=VARCHAR}
+      </if>
+      <if test="record.pickupdate != null">
+        AND pickupdate = #{record.pickupdate,jdbcType=DATE}
+      </if>
+      <if test="record.deliverdate != null">
+        AND deliverdate = #{record.deliverdate,jdbcType=DATE}
+      </if>
+      <if test="record.intervaldays != null">
+        AND interval = #{record.intervaldays,jdbcType=INTEGER}
+      </if>
+      <if test="record.enddate != null">
+        AND enddate = #{record.enddate,jdbcType=DATE}
+      </if>
+      <if test="record.active != null">
+        AND active = #{record.active,jdbcType=CHAR}
+      </if>
+       AND l.active=1
+    </where>
+     ORDER BY pickupdate
+  </select>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, companyid, address, pickupdate, deliverdate, intervaldays, enddate, active
+  </sql>
+  <select id="selectByExample" parameterType="com.quoll.model.RecurringorderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from recurringorder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from recurringorder
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from recurringorder
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.quoll.model.RecurringorderExample">
+    delete from recurringorder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.quoll.model.Recurringorder">
+    insert into recurringorder (id, companyid, address, 
+      pickupdate, deliverdate, intervaldays, 
+      enddate, active)
+    values (#{id,jdbcType=INTEGER}, #{companyid,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, 
+      #{pickupdate,jdbcType=DATE}, #{deliverdate,jdbcType=DATE}, #{intervaldays,jdbcType=INTEGER}, 
+      #{enddate,jdbcType=DATE}, #{active,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.quoll.model.Recurringorder">
+    insert into recurringorder
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="companyid != null">
+        companyid,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="pickupdate != null">
+        pickupdate,
+      </if>
+      <if test="deliverdate != null">
+        deliverdate,
+      </if>
+      <if test="intervaldays != null">
+        intervaldays,
+      </if>
+      <if test="enddate != null">
+        enddate,
+      </if>
+      <if test="active != null">
+        active,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyid != null">
+        #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="pickupdate != null">
+        #{pickupdate,jdbcType=DATE},
+      </if>
+      <if test="deliverdate != null">
+        #{deliverdate,jdbcType=DATE},
+      </if>
+      <if test="intervaldays != null">
+        #{intervaldays,jdbcType=INTEGER},
+      </if>
+      <if test="enddate != null">
+        #{enddate,jdbcType=DATE},
+      </if>
+      <if test="active != null">
+        #{active,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.quoll.model.RecurringorderExample" resultType="java.lang.Long">
+    select count(*) from recurringorder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update recurringorder
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.companyid != null">
+        companyid = #{record.companyid,jdbcType=INTEGER},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pickupdate != null">
+        pickupdate = #{record.pickupdate,jdbcType=DATE},
+      </if>
+      <if test="record.deliverdate != null">
+        deliverdate = #{record.deliverdate,jdbcType=DATE},
+      </if>
+      <if test="record.intervaldays != null">
+        intervaldays = #{record.intervaldays,jdbcType=INTEGER},
+      </if>
+      <if test="record.enddate != null">
+        enddate = #{record.enddate,jdbcType=DATE},
+      </if>
+      <if test="record.active != null">
+        active = #{record.active,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update recurringorder
+    set id = #{record.id,jdbcType=INTEGER},
+      companyid = #{record.companyid,jdbcType=INTEGER},
+      address = #{record.address,jdbcType=VARCHAR},
+      pickupdate = #{record.pickupdate,jdbcType=DATE},
+      deliverdate = #{record.deliverdate,jdbcType=DATE},
+      intervaldays = #{record.intervaldays,jdbcType=INTEGER},
+      enddate = #{record.enddate,jdbcType=DATE},
+      active = #{record.active,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.quoll.model.Recurringorder">
+    update recurringorder
+    <set>
+      <if test="companyid != null">
+        companyid = #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="pickupdate != null">
+        pickupdate = #{pickupdate,jdbcType=DATE},
+      </if>
+      <if test="deliverdate != null">
+        deliverdate = #{deliverdate,jdbcType=DATE},
+      </if>
+      <if test="intervaldays != null">
+        intervaldays = #{intervaldays,jdbcType=INTEGER},
+      </if>
+      <if test="enddate != null">
+        enddate = #{enddate,jdbcType=DATE},
+      </if>
+      <if test="active != null">
+        active = #{active,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.quoll.model.Recurringorder">
+    update recurringorder
+    set companyid = #{companyid,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      pickupdate = #{pickupdate,jdbcType=DATE},
+      deliverdate = #{deliverdate,jdbcType=DATE},
+      intervaldays = #{intervaldays,jdbcType=INTEGER},
+      enddate = #{enddate,jdbcType=DATE},
+      active = #{active,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

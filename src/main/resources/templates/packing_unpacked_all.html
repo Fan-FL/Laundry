@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry-Quoll</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/bootstrap.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style.css}" rel="stylesheet">
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style-responsive.css}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script th:src="@{https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}"></script>
+    <script th:src="@{https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js}"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<section id="container" >
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    <header class="header black-bg">
+        <div class="sidebar-toggle-box">
+            <div class="fa fa-bars tooltips" style="color:white" data-placement="right" data-original-title="Toggle Navigation"></div>
+        </div>
+        <!--logo start-->
+        <a th:href="@{unpacked_all}" class="logo"><b>COMPLETE WORKWEAR</b></a>
+        <!--logo end-->
+        <div class="top-menu">
+            <ul class="nav pull-right top-menu">
+               <li><a class="logout" th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+    <!--header end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN SIDEBAR MENU
+    *********************************************************************************************************************************************************** -->
+    <!--sidebar start-->
+    <aside>
+        <div id="sidebar"  class="nav-collapse ">
+            <!-- sidebar menu start-->
+            <ul class="sidebar-menu" id="nav-accordion">
+
+                <p class="centered"><img th:src="@{/Resources/dashgumfree_v2/Theme/assets/img/ui-sam.jpg}" class="img-circle" width="60"></a></p>
+                <h5 class="centered">Packing Staff</h5>
+
+                <li class="mt">
+                      <a class="active" th:href="@{unpacked_all}">
+                         <i class="fa fa-tasks"></i>
+                          <span>Unpacked Orders</span>
+                      </a>
+                  </li>
+                  
+                  <li class="mt">
+                      <a  th:href="@{partially_all}">
+                         <i class="fa fa-warning"></i>
+                          <span>Partially Packed Orders</span>
+                      </a>
+                  </li>
+                  
+                  <li class="mt">
+                      <a th:href="@{packed_all}">
+                          <i class="fa fa-check-square-o "></i>
+                          <span>Packed Orders</span>
+                      </a>
+                  </li>
+
+            </ul>
+            <!-- sidebar menu end-->
+        </div>
+    </aside>
+    <!--sidebar end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper site-min-height">
+            <h3><i class="fa fa-angle-right"></i> Unpacked Orders</h3><br>        
+            <div id="unpackedorders"></div>
+        </section><! --/wrapper -->
+    </section><!-- /MAIN CONTENT -->
+
+    <!--main content end-->
+</section>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap.min.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.ui.touch-punch.min.js}"></script>
+<script class="include" type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.dcjqaccordion.2.7.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.scrollTo.min.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.nicescroll.js}" type="text/javascript"></script>
+
+
+<!--common script for all pages-->
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/common-scripts.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$.ajax({
+            type: "GET",
+            url: 'order/getAllUnpacked',
+            cache : false,
+            dataType: "json",
+            success: function(result) {
+	            	$("#unpackedorders").empty();
+	            	if(result.length == 0)
+            			layer.msg('No unpacked orders.',{time:800});
+	            	
+	        		for(var i = 0; i < result.length; i++){
+	        			var textcompany = result[i].company.name;
+	        		    var textdetail = result[i].itemsDescription;
+	        		    var orderid = result[i].id;
+	        		    addOrder(textcompany,textdetail,orderid);
+	        		}
+            		
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Search Fail");
+            }
+        });
+	} );
+	
+	function addOrder(textcompany,textdetail,orderid){
+	    var node = document.createElement("div");
+	    node.className = "col-lg-12 ds";
+	    var href = document.createElement("a");
+	    href.setAttribute("href","unpacked?orderid="+orderid);
+	    var desc = document.createElement("div");
+	    desc.className = "desc";
+	    var col1 = document.createElement("div");
+		col1.className = "col1";
+	    var company = document.createElement("span");
+	    company.className = "company";
+	    var col2 = document.createElement("div");
+	    col2.className = "col2";
+	    var detail = document.createElement("span");
+	    detail.className = "detail";
+	    var col3 = document.createElement("div");
+	    col3.className = "col3";
+	    var status = document.createElement("div");
+	    status.className = "label label-warning";
+	    var text1 = document.createTextNode(textcompany);
+	    var text2 = document.createTextNode(textdetail);
+	    var text3 = document.createTextNode("To Do");
+	   	 	
+	    company.appendChild(text1);
+	    detail.appendChild(text2);
+	    status.appendChild(text3);
+	    
+	    col1.appendChild(company);
+	    col2.appendChild(detail);
+	    col3.appendChild(status);
+	    
+	    href.appendChild(col1);
+	    href.appendChild(col2);
+	    href.appendChild(col3); 
+	    desc.appendChild(href);
+		node.appendChild(desc);
+		document.getElementById("unpackedorders").appendChild(node);
+    }
+	
+</script>
+
+</body>
+</html>

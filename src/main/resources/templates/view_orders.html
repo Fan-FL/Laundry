@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry-Quoll</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/bootstrap.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" th:href="@{/Resources/dataTables/css/jquery.dataTables.css}">
+    <link th:href="@{/Resources/bootstrap-datepicker-1.6.4-dist/css/bootstrap-datepicker.css}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" th:href="@{/Resources/bootstrap-select/css/bootstrap-select.css}">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style.css}" rel="stylesheet">
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style-responsive.css}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script th:src="@{https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}"></script>
+    <script th:src="@{https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js}"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<section id="container" >
+    <!-- **********************************************************************************************************************************************************
+    TOP BAR CONTENT & NOTIFICATIONS
+    *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    <header class="header black-bg">
+        <div class="sidebar-toggle-box">
+            <div class="fa fa-bars tooltips" style="color:white" data-placement="right" data-original-title="Toggle Navigation"></div>
+        </div>
+        <!--logo start-->
+        <a th:href="@{view_orders}" class="logo"><b>COMPLETE WORKWEAR</b></a>
+        <!--logo end-->
+        <div class="top-menu">
+            <ul class="nav pull-right top-menu">
+                <li><a class="logout" th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+    <!--header end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN SIDEBAR MENU
+    *********************************************************************************************************************************************************** -->
+    <!--sidebar start-->
+    <aside>
+        <div id="sidebar"  class="nav-collapse ">
+            <!-- sidebar menu start-->
+            <ul class="sidebar-menu" id="nav-accordion">
+
+                <p class="centered"><img th:src="@{/Resources/dashgumfree_v2/Theme/assets/img/ui-sam.jpg}" class="img-circle" width="60"></a></p>
+                <h5 class="centered">Office person</h5>
+
+                <li class="sub-menu">
+                    <a th:href="@{javascript:;}" >
+                        <i class="fa fa-tasks"></i>
+                        <span>Orders</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a  th:href="@{view_orders}">View orders</a></li>
+                        <li><a  th:href="@{manage_recurring_orders}">Manage recurring orders</a></li>
+                        <li><a  th:href="@{add_nonrecurring_orders}">Add non-recurring orders</a></li>
+                    </ul>
+                </li>
+
+                <li class="sub-menu">
+                    <a th:href="@{javascript:;}" >
+                        <i class="fa fa-users"></i>
+                        <span>Customers</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a  th:href="@{view_customers}">View customers</a></li>
+                        <li><a  th:href="@{add_new_customer}">Add new customer</a></li>
+                    </ul>
+                </li>
+
+                <li class="sub-menu">
+                    <a  th:href="@{monthly_report}">
+                        <i class="fa fa-bar-chart-o"></i>
+                        <span>Monthly report</span>
+                    </a>
+                </li>
+
+            </ul>
+            <!-- sidebar menu end-->
+        </div>
+    </aside>
+    <!--sidebar end-->
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper site-min-height">
+            <h3><i class="fa fa-angle-right"></i> View orders</h3>
+
+            <!--row start-->
+            <div class="row mt" id="tablediv">
+                <div class="col-md-12">
+                    <div class="content-panel">
+                        <table id="view-orders-table" class="table">
+                            <thead>
+                            <tr>
+                                <th><i class="fa fa-bullhorn"></i> Company</th>
+                                <th><i class="fa fa-calendar"></i> Pick-up date</th>
+                                <th><i class="fa fa-calendar"></i> Drop-off date</th>
+                                <th><i class="fa fa-map-marker"></i> Delivery point</th>
+                                <th><i class="fa fa-edit"></i> Status</th>
+                                <th><i class="fa fa-file-text"></i> Order type</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div><!-- /content-panel -->
+                </div><!-- /col-md-12 -->
+            </div><!-- /row -->
+
+            <div class="row mt" id="detaildiv" style="display: none;">
+                <div class="col-lg-12">
+                    <div class="form-panel">
+                        <h4 class="mb"></h4>
+                        <form class="form-horizontal style-form" method="get">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Company</label>
+                                <label class="control-label" id="detailcompany"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Pick-up date</label>
+                                <label class="control-label" id="detailpickup"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Drop-off date</label>
+                                <label class="control-label" id="detaildropoff"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Delivery point</label>
+                                <label class="control-label" id="detailaddress"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Items</label>
+                                <div class="col-sm-6">
+	                                <table class="table  table-bordered" id="itemtable">  
+									    <tr>  
+									        <th style="text-align:left" width="200">Name</th>  
+									        <th style="text-align:left" width="200">Quantity</th>   
+									    </tr>  
+									</table>
+								</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Pick-up driver</label>
+                                <label class="control-label" id="detailpickupdriver"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Drop-off driver</label>
+                                <label class="control-label" id="detaildropoffdriver"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Packing person</label>
+                                <label class="control-label" id="detailpacking"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Notes</label>
+                                <label class="control-label" id="detailnotes"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Status</label>
+                                <label class="control-label" id="detailstatus"></label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Order Type</label>
+                                <label class="control-label" id="detailtype"></label>
+                            </div>
+                            <div class="form-footer" style="text-align:right">
+                                <a type="button" class="btn btn-primary" onclick="showTable();">Back</a>
+                            </div>
+                        </form>
+                    </div>
+                </div><!-- col-lg-12-->
+            </div><!-- /row -->
+
+            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="editModalTitle">Edit order</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form id="orderForm">
+                                <div class="form-group">
+                                    <label for="company" class="control-label">Company:</label>
+                                    <br>
+                                    <select class="selectpicker" id="companyid" name="companyid" onchange="loadAddress();" title="Choose one of the following...">
+			            		  	</select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pick-up-date" class="control-label">Pick-up date:</label>
+                                    <div class="input-group date" data-provide="datepicker">
+                                        <input type="text" class="form-control" id="presetpickupdate" name="presetpickupdate">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="drop-off-date" class="control-label">Drop-off date:</label>
+                                    <div class="input-group date" data-provide="datepicker">
+                                        <input type="text" class="form-control" id="presetdeliverydate" name="presetdeliverydate">
+                                        <div class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="delivery-point" class="control-label">Delivery point:</label>
+                                    <input type="text" class="form-control" id="delivery-point" id="address" name="address">
+                                </div>
+                                <div class="form-group">
+                                    <label for="company" class="control-label">Pick-up driver:</label>
+                                    <br>
+                                    <select class="selectpicker" id="driverid" name="driverid" title="Choose one of the following...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="company" class="control-label">Drop-off driver:</label>
+                                    <br>
+                                    <select class="selectpicker" id="deliverydriverid" name="deliverydriverid" title="Choose one of the following...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="company" class="control-label">Packing person:</label>
+                                    <br>
+                                    <select class="selectpicker" id="packingpersonid" name="packingpersonid" title="Choose one of the following...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status:</label>
+                                    <br>
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" name="status" id="ordercreated" value="0" checked>
+                                            Order created
+                                        </label>
+                                    </div>
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" name="status" id="pickedup" value="1">
+                                            Picked up
+                                        </label>
+                                    </div>
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" name="status" id="partiallypacked" value="2">
+                                            Partially packed
+                                        </label>
+                                    </div>
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" name="status" id="packed" value="3">
+                                            Packed
+                                        </label>
+                                    </div>
+                                    <div class="radio-inline">
+                                        <label>
+                                            <input type="radio" name="status" id="delivered" value="4">
+                                            Delivered
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-theme" onclick="updateOrder();">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section><! --/wrapper -->
+    </section><!-- /MAIN CONTENT -->
+
+    <!--main content end-->
+</section>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap.min.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.ui.touch-punch.min.js}"></script>
+<script class="include" type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.dcjqaccordion.2.7.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.scrollTo.min.js}"></script>
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.nicescroll.js}" type="text/javascript"></script>
+
+
+<!--common script for all pages-->
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/common-scripts.js}"></script>
+
+<!--script for this page-->
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+
+<!--custom switch-->
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap-switch.js}"></script>
+
+<!--custom tagsinput-->
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.tagsinput.js}"></script>
+
+<!--custom checkbox & radio-->
+
+<script type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap-inputmask/bootstrap-inputmask.min.js}"></script>
+
+
+<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/form-component.js}"></script>
+
+<!--custom dataTables-->
+<script type="text/javascript" charset="utf8" th:src="@{/Resources/dataTables/js/jquery.dataTables.js}"></script>
+
+<!--custom dataPicker-->
+<script th:src="@{/Resources/bootstrap-datepicker-1.6.4-dist/js/bootstrap-datepicker.js}"></script>
+
+<!--custom select-->
+<script th:src="@{/Resources/bootstrap-select/js/bootstrap-select.js}"></script>
+
+<script th:src="@{/js/layer.js}"></script>
+<script>
+
+	var table;
+	
+    $(document).ready( function () {
+    	// get the list of all companies in the system
+    	$.ajax({
+            type: "GET",
+            url: 'company/getAll',
+            cache : false,
+            dataType: "json",
+            success: function(result) {
+            	for(var i=0;i<result.data.length;i++){
+            		if (result.data[i].active == 1) {
+	                    var company = "<option value='" + result.data[i].id + "'>" + result.data[i].name + "</option>";
+	                    $('#companyid').append(company);
+	                    $('#companyid').selectpicker('refresh');
+            		}
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    	
+    	// get the list of all drivers in the system
+    	$.ajax({
+            type: "GET",
+            url: 'order/getAllDrivers',
+            cache : false,
+            dataType: "json",
+            success: function(result) {
+            	for(var i=0;i<result.length;i++){
+                    var driver = "<option value='" + result[i].id + "'>" + result[i].username + "</option>";
+                    $('#driverid').append(driver);
+                    $('#driverid').selectpicker('refresh');
+                    $('#deliverydriverid').append(driver);
+                    $('#deliverydriverid').selectpicker('refresh');
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    	
+    	// get the list of all packing persons in the system
+    	$.ajax({
+            type: "GET",
+            url: 'order/getAllPackingPerson',
+            cache : false,
+            dataType: "json",
+            success: function(result) {
+            	for(var i=0;i<result.length;i++){
+                    var packingperson = "<option value='" + result[i].id + "'>" + result[i].username + "</option>";
+                    $('#packingpersonid').append(packingperson);
+                    $('#packingpersonid').selectpicker('refresh');
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    	
+    	// read information of all orders
+    	table = $('#view-orders-table').DataTable( {
+            "processing": true,
+            "ajax" : function(data, callback, settings) {
+                $.ajax({
+                    type: "GET",
+                    url: 'order/getAll',
+                    cache : false, 
+                    dataType: "json",
+                    success: function(result) {
+                    	callback(result);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Failed.");
+                    }
+                });
+            },
+            "columns": [
+                { "data": "company.name",
+                  "render": function (data, type, full, meta) {
+                	  return data;
+                  }
+                },
+                { "data": "presetpickupdate",
+                   "render": function (data, type, full, meta) {
+                 	  return getMyDate(data);
+                   }
+                },
+                { "data": "presetdeliverydate",
+                  "render": function (data, type, full, meta) {
+                	  return getMyDate(data);
+                  }
+                },
+                { "data": "address" },
+                {
+                    "data": "status",
+                    "render": function (data, type, full, meta) {
+                    	if (data == 0) {
+                    		return '<span class="label label-info label-mini">order created</span>';
+                    	} else if (data == 1) {
+                    		return '<span class="label label-warning label-mini">picked up</span>';
+                    	} else if (data == 2) {
+                    		return '<span class="label label-warning label-mini">partially packed</span>';
+                    	} else if (data == 3) {
+                    		return '<span class="label label-warning label-mini">packed</span>';
+                    	} else {
+                    		return '<span class="label label-success label-mini">delivered</span>';
+                    	}
+                    },
+                    "bSortable": false
+                },
+                {
+                    "data": "recurringflag",
+                    "render": function (data, type, full, meta) {
+                    	if (data == 1) {
+                    		return '<span class="label label-info label-mini">Recurring</span>';
+                    	} else {
+                    		return '<span class="label label-success label-mini">Non-recurring</span>';
+                    	}
+                    },
+                    "bSortable": false
+                },
+                {
+                    "data": "id",
+                    "render": function (data, type, full, meta) {
+                        return '<button class="btn btn-success btn-xs" onclick="showDetail('+data+');"><i class="fa fa-info-circle"></i></button>' +
+                        	'<button class="btn btn-primary btn-xs" onclick="editOrder('+data+');"><i class="fa fa-pencil"></i></button>' +
+                        	'<button class="btn btn-danger btn-xs" onclick="deleteOrder('+data+');"><i class="fa fa-trash-o "></i></button>';
+                    },
+                    "bSortable": false
+                }
+            ]
+        } );
+   
+    });
+    
+    // read date for edit order window
+    function editOrder(val) {
+    	var param = "id=" + val;
+    	
+    	$.ajax({
+            type: "GET",
+            url: 'order/getOne',
+            cache : false,
+            data : param,
+            dataType: "json",
+            success: function(result) {
+            	document.getElementById("editModalTitle").value = result.order.id;
+            	$('#companyid').selectpicker('val',result.order.companyid);
+            	document.getElementById("address").value = result.order.address;
+            	document.getElementById("presetpickupdate").value = getMyDate(result.order.presetpickupdate);
+            	document.getElementById("presetdeliverydate").value = getMyDate(result.order.presetdeliverydate);
+            	$('#driverid').selectpicker('val',result.order.driverid);
+            	$('#deliverydriverid').selectpicker('val',result.order.deliverydriverid);
+            	$('#packingpersonid').selectpicker('val',result.order.packingpersonid);
+            	if (result.order.status == 0) {
+            		$('#ordercreated').attr("checked",true);
+            	} else if (result.order.status == 1) {
+            		$('#pickedup').attr("checked",true);
+            	} else if (result.order.status == 2) {
+            		$('#partiallypacked').attr("checked",true);
+            	} else if (result.order.status == 3) {
+            		$('#packed').attr("checked",true);
+            	} else if (result.order.status == 4) {
+            		$('#delivered').attr("checked",true);
+            	} else {
+            		$('#unknown').attr("checked",true);
+            	}
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Search order failed.");
+            }
+        });
+    	
+    	$('#editModal').modal();
+    }
+    
+    // fill the address automatically when choose a company
+    function loadAddress() {
+    	var param = "id=" + $("#companyid").val();
+    	
+    	$.ajax({
+            type: "GET",
+            url: 'company/getOne',
+            cache : false,
+            data : param,
+            dataType: "json",
+            success: function(result) {
+            	document.getElementById("address").value = result.address;
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    }
+    
+    // update the order to the server
+    function updateOrder() {
+    	var companyid = $("#companyid").val();
+    	var presetpickupdate = $("#presetpickupdate").val();
+        var presetdeliverydate = $("#presetdeliverydate").val();
+        var driverid = $("#driverid").val();
+        var deliverydriverid = $("#deliverydriverid").val();
+        var packingpersonid = $("#packingpersonid").val();
+        if(companyid == ""){
+        	return layer.msg('Company can not be empty.', function(){});
+        }
+        if(presetpickupdate == ""){
+        	return layer.msg('Pick up date can not be empty.', function(){});
+        }
+        if(presetdeliverydate == ""){
+        	return layer.msg('Delivery date can not be empty.', function(){});
+        }
+        if(driverid == ""){
+        	return layer.msg('Pick-up driver can not be empty.', function(){});
+        }
+        if(deliverydriverid == ""){
+        	return layer.msg('Drop-off driver can not be empty.', function(){});
+        }
+        if(packingpersonid == ""){
+        	return layer.msg('Packing person can not be empty.', function(){});
+        }
+        var temppickupdate = presetpickupdate.split('/')[2]+presetpickupdate.split('/')[0]+presetpickupdate.split('/')[1];
+        var tempdeliverydate = presetdeliverydate.split('/')[2]+presetdeliverydate.split('/')[0]+presetdeliverydate.split('/')[1];
+        if (temppickupdate>tempdeliverydate) {
+        	return layer.msg('Pick-up date can not be later than Delivery date.', function(){});
+        }
+        
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url:'order/update',
+            data:getQueryString($('#orderForm').serialize(),document.getElementById("editModalTitle").value),
+            async: false,
+            success: function(data) {
+                if(data=="success"){
+                    layer.msg('Edit success.', {time:800});
+                }else{
+                    layer.msg('Edit fail.');
+                }
+            }
+        });
+        
+        table.ajax.reload();
+        $('#editModal').modal('hide');
+    }
+    
+    // delete the order with a confirmation
+    function deleteOrder(val) {
+    	layer.confirm('Do you want to delete this order?', 
+    	{title:'Confirm delete',
+    		btn: ['Yes','No']}, 
+    	function(){
+   			var param = "id=" + val;
+   			$.ajax({
+   	            cache: true,
+   	            type: "POST",
+   	            url:'order/deleteOrder',
+   	            data:param,
+   	            async: false,
+   	            success: function(data) {
+   	                if(data=="success"){
+   	                    layer.msg('Delete success.', {time:800});
+   	                 	table.ajax.reload();
+   	                }else{
+   	                    layer.msg('Delete fail.');
+   	                }
+   	            }
+   	        });
+   		}, function(){
+   		  return;
+   		});
+    }
+    
+    // show the detail of an order in the same page
+    function showDetail(val) {
+    	var param = "id="+val;
+    	
+    	var table = $("#itemtable");  
+        var tbody = table.children();  
+        var trs = tbody.children(); 
+        for (var i=1; i<trs.length; i++) {
+      	  trs[i].remove();
+        }
+    	
+    	$.ajax({
+            type: "GET",
+            url: 'order/getOne',
+            cache : false,
+            data : param,
+            dataType: "json",
+            success: function(result) {
+            	document.getElementById("detailcompany").innerHTML = result.order.company.name;
+            	document.getElementById("detailpickup").innerHTML = getMyDate(result.order.presetpickupdate);
+            	document.getElementById("detaildropoff").innerHTML = getMyDate(result.order.presetdeliverydate);
+            	document.getElementById("detailaddress").innerHTML = result.order.company.address;
+            	document.getElementById("detailnotes").innerHTML = result.order.notes;
+            	document.getElementById("detailpickupdriver").innerHTML = result.order.pickupDriver.username==null?"":result.order.pickupDriver.username;
+            	document.getElementById("detaildropoffdriver").innerHTML = result.order.deliveryDriver.username==null?"":result.order.deliveryDriver.username;
+            	document.getElementById("detailpacking").innerHTML = result.order.packingPerson.username==null?"":result.order.packingPerson.username;
+            	if (result.items != null) {
+            		for (var i=0; i<result.items.length; i++) {
+                		var table = $("#itemtable");
+                		var tr= $("<tr>" +  
+                	            "<td  style='text-align:left;'>"+result.items[i].garment.fullname+"</td>" +  
+                	            "<td  style='text-align:left;'>"+result.items[i].pickupnumber+"</td>");  
+               	        table.append(tr);
+                	}
+            	}
+            	if (result.order.status == 0) {
+            		document.getElementById("detailstatus").innerHTML = "Created";
+            	} else if (result.order.status == 1) {
+            		document.getElementById("detailstatus").innerHTML = "Picked up";
+            	} else if (result.order.status == 2) {
+            		document.getElementById("detailstatus").innerHTML = "Partially packed";
+            	} else if (result.order.status == 3) {
+            		document.getElementById("detailstatus").innerHTML = "Packed";
+            	} else if (result.order.status == 4) {
+            		document.getElementById("detailstatus").innerHTML = "Delivered";
+            	} else {
+            		document.getElementById("detailstatus").innerHTML = "Unknown";
+            	}
+            	if (result.order.recurringflag == 1) {
+            		document.getElementById("detailtype").innerHTML = "Recurring";
+            	} else {
+            		document.getElementById("detailtype").innerHTML = "Non-recurring";
+            	}
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    	
+    	document.getElementById("tablediv").style.display="none";
+    	document.getElementById("detaildiv").style.display="";
+    }
+    
+    function showTable() {
+    	document.getElementById("tablediv").style.display="";
+    	document.getElementById("detaildiv").style.display="none";
+    }
+    
+    function getQueryString(data,id) {
+    	var param = 'id=' + id + '&' + data;
+    	return param;
+    }
+    
+    // change the date the MM/DD/YY
+    function getMyDate(str){  
+    	if (str == ""||str == null) {
+      		return "";
+      	} else {
+      		var oDate = new Date(str),  
+              oYear = oDate.getFullYear(),  
+              oMonth = oDate.getMonth()+1,  
+              oDay = oDate.getDate(),   
+              oTime = getzf(oMonth) +'/'+ getzf(oDay) + '/' + oYear;
+              return oTime;
+      	}
+    };  
+    
+    // add 0 to number 0-9
+    function getzf(num){  
+        if(parseInt(num) < 10){  
+            num = '0'+num;  
+        }  
+        return num;  
+    }  
+
+</script>
+
+</body>
+</html>

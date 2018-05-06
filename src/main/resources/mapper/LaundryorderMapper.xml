@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quoll.mapper.LaundryorderMapper">
+  <resultMap id="BaseResultMap" type="com.quoll.model.Laundryorder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="createddate" jdbcType="DATE" property="createddate" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="companyid" jdbcType="INTEGER" property="companyid" />
+    <result column="presetpickupdate" jdbcType="DATE" property="presetpickupdate" />
+    <result column="realpickupdate" jdbcType="DATE" property="realpickupdate" />
+    <result column="packingdate" jdbcType="DATE" property="packingdate" />
+    <result column="presetdeliverydate" jdbcType="DATE" property="presetdeliverydate" />
+    <result column="deliverydate" jdbcType="DATE" property="deliverydate" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="driverid" jdbcType="INTEGER" property="driverid" />
+    <result column="packingpersonid" jdbcType="INTEGER" property="packingpersonid" />
+    <result column="notes" jdbcType="VARCHAR" property="notes" />
+    <result column="statushistory" jdbcType="VARCHAR" property="statushistory" />
+    <result column="deliverydriverid" jdbcType="INTEGER" property="deliverydriverid" />
+    <result column="recurringFlag" jdbcType="INTEGER" property="recurringflag" />
+    <result column="active" jdbcType="CHAR" property="active" />
+    <association property="company" javaType="com.quoll.model.Company">
+      <id column="c_id" jdbcType="INTEGER" property="id" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="address" jdbcType="VARCHAR" property="address" />
+    </association>
+  </resultMap>
+  <select id="reportByCompanyIDBetweenDate" resultType="java.util.Map">
+    SELECT SUM(o.pickupnumber) AS countNumber, g.fullname AS fullname, g.shortname AS shortname FROM orderitems o, laundryorder l, garment g
+    WHERE o.orderid=l.id AND l.companyid = #{companyid,jdbcType=INTEGER} AND o.garmentid=g.id
+    AND l.realpickupdate &gt;= #{startDate,jdbcType=DATE} AND l.realpickupdate &lt;= #{endDate,jdbcType=DATE}
+    GROUP BY g.`fullname`, g.`shortname`
+  </select>
+  <select id="selectByIDRef" resultMap="BaseResultMap">
+    SELECT l.*, c.id as c_id, c.name, c.address as c_address FROM laundryorder l LEFT JOIN company c ON l.companyid=c.id WHERE l.id=#{orderid} AND l.active=1
+  </select>
+  <select id="selectAllRef" resultMap="BaseResultMap">
+    SELECT l.*, c.id as c_id, c.name, c.address as c_address FROM laundryorder l LEFT JOIN company c ON l.companyid=c.id WHERE l.active=1 ORDER BY presetpickupdate
+  </select>
+  <select id="selectRefSelective" resultMap="BaseResultMap">
+    SELECT l.*, c.id as c_id, c.name, c.address as c_address FROM laundryorder l LEFT JOIN company c ON l.companyid=c.id
+    <where>
+      <if test="record.id != null">
+        AND l.id = #{record.id,jdbcType=INTEGER}
+      </if>
+      <if test="record.createddate != null">
+        AND l.createddate = #{record.createddate,jdbcType=DATE}
+      </if>
+      <if test="record.address != null">
+        AND l.address = #{record.address,jdbcType=VARCHAR}
+      </if>
+      <if test="record.companyid != null">
+        AND l.companyid = #{record.companyid,jdbcType=INTEGER}
+      </if>
+      <if test="record.presetpickupdate != null">
+        AND l.presetpickupdate = #{record.presetpickupdate,jdbcType=DATE}
+      </if>
+      <if test="record.realpickupdate != null">
+        AND l.realpickupdate = #{record.realpickupdate,jdbcType=DATE}
+      </if>
+      <if test="record.packingdate != null">
+        AND l.packingdate = #{record.packingdate,jdbcType=DATE}
+      </if>
+      <if test="record.presetdeliverydate != null">
+        AND l.presetdeliverydate = #{record.presetdeliverydate,jdbcType=DATE}
+      </if>
+      <if test="record.deliverydate != null">
+        AND l.eliverydate = #{record.deliverydate,jdbcType=DATE}
+      </if>
+      <if test="record.status != null">
+        AND l.status = #{record.status,jdbcType=INTEGER}
+      </if>
+      <if test="record.driverid != null">
+        AND l.driverid = #{record.driverid,jdbcType=INTEGER}
+      </if>
+      <if test="record.packingpersonid != null">
+        AND l.packingpersonid = #{record.packingpersonid,jdbcType=INTEGER}
+      </if>
+      <if test="record.notes != null">
+        AND l.notes = #{record.notes,jdbcType=VARCHAR}
+      </if>
+      <if test="record.statushistory != null">
+        AND l.statushistory = #{record.statushistory,jdbcType=VARCHAR}
+      </if>
+      <if test="record.deliverydriverid != null">
+        AND l.deliverydriverid = #{record.deliverydriverid,jdbcType=INTEGER}
+      </if>
+      <if test="record.recurringflag != null">
+        AND l.recurringFlag = #{record.recurringflag,jdbcType=INTEGER}
+      </if>
+        AND l.active=1
+    </where>
+      ORDER BY presetpickupdate
+  </select>
+  <select id="selectRefStatusBetweenSelective" resultMap="BaseResultMap">
+    SELECT l.*, c.* FROM laundryorder l LEFT JOIN company c ON l.companyid=c.id
+    <where>
+      <if test="record.statusLittleEnd != null ">
+        and l.status &gt;= #{record.statusLittleEnd,jdbcType=INTEGER}
+      </if>
+      <if test="record.statusBiggerEnd != null">
+        and l.status &lt;= #{record.statusBiggerEnd,jdbcType=INTEGER}
+      </if>
+      <if test="record.id != null">
+        AND l.id = #{record.id,jdbcType=INTEGER}
+      </if>
+      <if test="record.createddate != null">
+        AND l.createddate = #{record.createddate,jdbcType=DATE}
+      </if>
+      <if test="record.address != null">
+        AND l.address = #{record.address,jdbcType=VARCHAR}
+      </if>
+      <if test="record.companyid != null">
+        AND l.companyid = #{record.companyid,jdbcType=INTEGER}
+      </if>
+      <if test="record.presetpickupdate != null">
+        AND l.presetpickupdate = #{record.presetpickupdate,jdbcType=DATE}
+      </if>
+      <if test="record.realpickupdate != null">
+        AND l.realpickupdate = #{record.realpickupdate,jdbcType=DATE}
+      </if>
+      <if test="record.packingdate != null">
+        AND l.packingdate = #{record.packingdate,jdbcType=DATE}
+      </if>
+      <if test="record.presetdeliverydate != null">
+        AND l.presetdeliverydate = #{record.presetdeliverydate,jdbcType=DATE}
+      </if>
+      <if test="record.deliverydate != null">
+        AND l.eliverydate = #{record.deliverydate,jdbcType=DATE}
+      </if>
+      <if test="record.status != null">
+        AND l.status = #{record.status,jdbcType=INTEGER}
+      </if>
+      <if test="record.driverid != null">
+        AND l.driverid = #{record.driverid,jdbcType=INTEGER}
+      </if>
+      <if test="record.packingpersonid != null">
+        AND l.packingpersonid = #{record.packingpersonid,jdbcType=INTEGER}
+      </if>
+      <if test="record.notes != null">
+        AND l.notes = #{record.notes,jdbcType=VARCHAR}
+      </if>
+      <if test="record.statushistory != null">
+        AND l.statushistory = #{record.statushistory,jdbcType=VARCHAR}
+      </if>
+      <if test="record.deliverydriverid != null">
+        AND l.deliverydriverid = #{record.deliverydriverid,jdbcType=INTEGER}
+      </if>
+      <if test="record.recurringflag != null">
+        AND l.recurringFlag = #{record.recurringflag,jdbcType=INTEGER}
+      </if>
+       AND l.active=1
+    </where>
+  </select>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, createddate, address, companyid, presetpickupdate, realpickupdate, packingdate, 
+    presetdeliverydate, deliverydate, status, driverid, packingpersonid, notes, statushistory, 
+    deliverydriverid, recurringFlag, active
+  </sql>
+  <select id="selectByExample" parameterType="com.quoll.model.LaundryorderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from laundryorder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from laundryorder
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from laundryorder
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.quoll.model.LaundryorderExample">
+    delete from laundryorder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.quoll.model.Laundryorder">
+    insert into laundryorder (id, createddate, address, 
+      companyid, presetpickupdate, realpickupdate, 
+      packingdate, presetdeliverydate, deliverydate, 
+      status, driverid, packingpersonid, 
+      notes, statushistory, deliverydriverid, 
+      recurringFlag, active)
+    values (#{id,jdbcType=INTEGER}, #{createddate,jdbcType=DATE}, #{address,jdbcType=VARCHAR}, 
+      #{companyid,jdbcType=INTEGER}, #{presetpickupdate,jdbcType=DATE}, #{realpickupdate,jdbcType=DATE}, 
+      #{packingdate,jdbcType=DATE}, #{presetdeliverydate,jdbcType=DATE}, #{deliverydate,jdbcType=DATE}, 
+      #{status,jdbcType=INTEGER}, #{driverid,jdbcType=INTEGER}, #{packingpersonid,jdbcType=INTEGER}, 
+      #{notes,jdbcType=VARCHAR}, #{statushistory,jdbcType=VARCHAR}, #{deliverydriverid,jdbcType=INTEGER}, 
+      #{recurringflag,jdbcType=INTEGER}, #{active,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.quoll.model.Laundryorder">
+    insert into laundryorder
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="createddate != null">
+        createddate,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="companyid != null">
+        companyid,
+      </if>
+      <if test="presetpickupdate != null">
+        presetpickupdate,
+      </if>
+      <if test="realpickupdate != null">
+        realpickupdate,
+      </if>
+      <if test="packingdate != null">
+        packingdate,
+      </if>
+      <if test="presetdeliverydate != null">
+        presetdeliverydate,
+      </if>
+      <if test="deliverydate != null">
+        deliverydate,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="driverid != null">
+        driverid,
+      </if>
+      <if test="packingpersonid != null">
+        packingpersonid,
+      </if>
+      <if test="notes != null">
+        notes,
+      </if>
+      <if test="statushistory != null">
+        statushistory,
+      </if>
+      <if test="deliverydriverid != null">
+        deliverydriverid,
+      </if>
+      <if test="recurringflag != null">
+        recurringFlag,
+      </if>
+      <if test="active != null">
+        active,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="createddate != null">
+        #{createddate,jdbcType=DATE},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="companyid != null">
+        #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="presetpickupdate != null">
+        #{presetpickupdate,jdbcType=DATE},
+      </if>
+      <if test="realpickupdate != null">
+        #{realpickupdate,jdbcType=DATE},
+      </if>
+      <if test="packingdate != null">
+        #{packingdate,jdbcType=DATE},
+      </if>
+      <if test="presetdeliverydate != null">
+        #{presetdeliverydate,jdbcType=DATE},
+      </if>
+      <if test="deliverydate != null">
+        #{deliverydate,jdbcType=DATE},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="driverid != null">
+        #{driverid,jdbcType=INTEGER},
+      </if>
+      <if test="packingpersonid != null">
+        #{packingpersonid,jdbcType=INTEGER},
+      </if>
+      <if test="notes != null">
+        #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="statushistory != null">
+        #{statushistory,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverydriverid != null">
+        #{deliverydriverid,jdbcType=INTEGER},
+      </if>
+      <if test="recurringflag != null">
+        #{recurringflag,jdbcType=INTEGER},
+      </if>
+      <if test="active != null">
+        #{active,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.quoll.model.LaundryorderExample" resultType="java.lang.Long">
+    select count(*) from laundryorder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update laundryorder
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.createddate != null">
+        createddate = #{record.createddate,jdbcType=DATE},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.companyid != null">
+        companyid = #{record.companyid,jdbcType=INTEGER},
+      </if>
+      <if test="record.presetpickupdate != null">
+        presetpickupdate = #{record.presetpickupdate,jdbcType=DATE},
+      </if>
+      <if test="record.realpickupdate != null">
+        realpickupdate = #{record.realpickupdate,jdbcType=DATE},
+      </if>
+      <if test="record.packingdate != null">
+        packingdate = #{record.packingdate,jdbcType=DATE},
+      </if>
+      <if test="record.presetdeliverydate != null">
+        presetdeliverydate = #{record.presetdeliverydate,jdbcType=DATE},
+      </if>
+      <if test="record.deliverydate != null">
+        deliverydate = #{record.deliverydate,jdbcType=DATE},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.driverid != null">
+        driverid = #{record.driverid,jdbcType=INTEGER},
+      </if>
+      <if test="record.packingpersonid != null">
+        packingpersonid = #{record.packingpersonid,jdbcType=INTEGER},
+      </if>
+      <if test="record.notes != null">
+        notes = #{record.notes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.statushistory != null">
+        statushistory = #{record.statushistory,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deliverydriverid != null">
+        deliverydriverid = #{record.deliverydriverid,jdbcType=INTEGER},
+      </if>
+      <if test="record.recurringflag != null">
+        recurringFlag = #{record.recurringflag,jdbcType=INTEGER},
+      </if>
+      <if test="record.active != null">
+        active = #{record.active,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update laundryorder
+    set id = #{record.id,jdbcType=INTEGER},
+      createddate = #{record.createddate,jdbcType=DATE},
+      address = #{record.address,jdbcType=VARCHAR},
+      companyid = #{record.companyid,jdbcType=INTEGER},
+      presetpickupdate = #{record.presetpickupdate,jdbcType=DATE},
+      realpickupdate = #{record.realpickupdate,jdbcType=DATE},
+      packingdate = #{record.packingdate,jdbcType=DATE},
+      presetdeliverydate = #{record.presetdeliverydate,jdbcType=DATE},
+      deliverydate = #{record.deliverydate,jdbcType=DATE},
+      status = #{record.status,jdbcType=INTEGER},
+      driverid = #{record.driverid,jdbcType=INTEGER},
+      packingpersonid = #{record.packingpersonid,jdbcType=INTEGER},
+      notes = #{record.notes,jdbcType=VARCHAR},
+      statushistory = #{record.statushistory,jdbcType=VARCHAR},
+      deliverydriverid = #{record.deliverydriverid,jdbcType=INTEGER},
+      recurringFlag = #{record.recurringflag,jdbcType=INTEGER},
+      active = #{record.active,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.quoll.model.Laundryorder">
+    update laundryorder
+    <set>
+      <if test="createddate != null">
+        createddate = #{createddate,jdbcType=DATE},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="companyid != null">
+        companyid = #{companyid,jdbcType=INTEGER},
+      </if>
+      <if test="presetpickupdate != null">
+        presetpickupdate = #{presetpickupdate,jdbcType=DATE},
+      </if>
+      <if test="realpickupdate != null">
+        realpickupdate = #{realpickupdate,jdbcType=DATE},
+      </if>
+      <if test="packingdate != null">
+        packingdate = #{packingdate,jdbcType=DATE},
+      </if>
+      <if test="presetdeliverydate != null">
+        presetdeliverydate = #{presetdeliverydate,jdbcType=DATE},
+      </if>
+      <if test="deliverydate != null">
+        deliverydate = #{deliverydate,jdbcType=DATE},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="driverid != null">
+        driverid = #{driverid,jdbcType=INTEGER},
+      </if>
+      <if test="packingpersonid != null">
+        packingpersonid = #{packingpersonid,jdbcType=INTEGER},
+      </if>
+      <if test="notes != null">
+        notes = #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="statushistory != null">
+        statushistory = #{statushistory,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverydriverid != null">
+        deliverydriverid = #{deliverydriverid,jdbcType=INTEGER},
+      </if>
+      <if test="recurringflag != null">
+        recurringFlag = #{recurringflag,jdbcType=INTEGER},
+      </if>
+      <if test="active != null">
+        active = #{active,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.quoll.model.Laundryorder">
+    update laundryorder
+    set createddate = #{createddate,jdbcType=DATE},
+      address = #{address,jdbcType=VARCHAR},
+      companyid = #{companyid,jdbcType=INTEGER},
+      presetpickupdate = #{presetpickupdate,jdbcType=DATE},
+      realpickupdate = #{realpickupdate,jdbcType=DATE},
+      packingdate = #{packingdate,jdbcType=DATE},
+      presetdeliverydate = #{presetdeliverydate,jdbcType=DATE},
+      deliverydate = #{deliverydate,jdbcType=DATE},
+      status = #{status,jdbcType=INTEGER},
+      driverid = #{driverid,jdbcType=INTEGER},
+      packingpersonid = #{packingpersonid,jdbcType=INTEGER},
+      notes = #{notes,jdbcType=VARCHAR},
+      statushistory = #{statushistory,jdbcType=VARCHAR},
+      deliverydriverid = #{deliverydriverid,jdbcType=INTEGER},
+      recurringFlag = #{recurringflag,jdbcType=INTEGER},
+      active = #{active,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

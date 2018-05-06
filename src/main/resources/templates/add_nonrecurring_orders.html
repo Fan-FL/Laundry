@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry-Quoll</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/bootstrap.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <link th:href="@{/Resources/bootstrap-datepicker-1.6.4-dist/css/bootstrap-datepicker.css}" rel="stylesheet" />    
+    <link rel="stylesheet" type="text/css" th:href="@{/Resources/bootstrap-select/css/bootstrap-select.css}">    
+        
+    <!-- Custom styles for this template -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style.css}" rel="stylesheet">
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style-responsive.css}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script th:src="@{https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}"></script>
+      <script th:src="@{https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js}"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+  <section id="container" >
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+      <!--header start-->
+      <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" style="color:white" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
+            <!--logo start-->
+            <a th:href="@{view_orders}" class="logo"><b>COMPLETE WORKWEAR</b></a>
+            <!--logo end-->
+            <div class="top-menu">
+            	<ul class="nav pull-right top-menu">
+                    <li><a class="logout" th:href="@{/logout}">Logout</a></li>
+            	</ul>
+            </div>
+        </header>
+      <!--header end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+              
+              	  <p class="centered"><img th:src="@{/Resources/dashgumfree_v2/Theme/assets/img/ui-sam.jpg}" class="img-circle" width="60" src=""></a></p>
+              	  <h5 class="centered">Office person</h5>
+
+                  <li class="sub-menu">
+                      <a th:href="@{javascript:;}" >
+                          <i class="fa fa-tasks"></i>
+                          <span>Orders</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a  th:href="@{view_orders}">View orders</a></li>
+                          <li><a  th:href="@{manage_recurring_orders}">Manage recurring orders</a></li>
+                          <li><a  th:href="@{add_nonrecurring_orders}">Add non-recurring orders</a></li>
+                      </ul>
+                  </li>
+
+                  <li class="sub-menu">
+                      <a th:href="@{javascript:;}" >
+                          <i class="fa fa-users"></i>
+                          <span>Customers</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a  th:href="@{view_customers}">View customers</a></li>
+                          <li><a  th:href="@{add_new_customer}">Add new customer</a></li>
+                      </ul>
+                  </li>  
+
+                  <li class="sub-menu">
+                      <a th:href="@{monthly_report}">
+                          <i class="fa fa-bar-chart-o"></i>
+                          <span>Monthly report</span>
+                      </a>
+                  </li>                
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper site-min-height">
+          	<h3><i class="fa fa-angle-right"></i> Add non-recurring order</h3>
+
+              <!-- BASIC FORM ELELEMNTS -->
+          	<div class="row mt">
+          		<div class="col-lg-12">
+                  <div class="form-panel">
+                  	  <h4 class="mb"></h4>
+                      <form class="form-horizontal style-form" method="get" id="orderForm">
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Company</label>
+                              <div class="col-sm-10">
+                                  <select class="selectpicker" id="companyid" name="companyid" onchange="loadAddress();" title="Choose one of the following...">
+			            		  </select>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 control-label">Pick-up date</label>
+                              <div class="col-sm-2">
+                                  <div class="input-group date" data-provide="datepicker">
+									  <input type="text" class="form-control" id="presetpickupdate" name="presetpickupdate">
+									  <div class="input-group-addon">
+									      <span class="glyphicon glyphicon-calendar"></span>
+									  </div>
+								  </div>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 control-label">Drop-off date</label>
+                              <div class="col-sm-2">
+                                  <div class="input-group date" data-provide="datepicker">
+									  <input type="text" class="form-control" id="presetdeliverydate" name="presetdeliverydate">
+									  <div class="input-group-addon">
+									      <span class="glyphicon glyphicon-calendar"></span>
+									  </div>
+								  </div>
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Delivery point</label>
+                              <div class="col-sm-10">
+                                  <input type="text" class="form-control" id="address" name="address">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Pick-up driver</label>
+                              <div class="col-sm-10">
+                                  <select class="selectpicker" id="driverid" name="driverid" title="Choose one of the following...">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Drop-off driver</label>
+                              <div class="col-sm-10">
+                                  <select class="selectpicker" id="deliverydriverid" name="deliverydriverid" title="Choose one of the following...">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Packing person</label>
+                              <div class="col-sm-10">
+                                  <select class="selectpicker" id="packingpersonid" name="packingpersonid" title="Choose one of the following...">
+                              </div>
+                          </div>
+                          <div class="form-footer" style="text-align:right">
+                          	  <button type="button" onclick="formReset();" class="btn btn-default">Reset</button>
+                          	  &nbsp;
+				        	  <button type="button" onclick="addOrder();" class="btn btn-theme">Submit</button>
+                          </div>
+                      </form>
+                  </div>
+          		</div><!-- col-lg-12-->      	
+          	</div><!-- /row -->
+
+		</section><! --/wrapper -->
+      </section><!-- /MAIN CONTENT -->
+
+      <!--main content end-->
+  </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.ui.touch-punch.min.js}"></script>
+    <script class="include" type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.dcjqaccordion.2.7.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.scrollTo.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.nicescroll.js}" type="text/javascript"></script>
+
+
+    <!--common script for all pages-->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/common-scripts.js}"></script>
+
+    <!--script for this page-->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+
+	<!--custom switch-->
+	<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap-switch.js}"></script>
+	
+	<!--custom tagsinput-->
+	<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.tagsinput.js}"></script>
+	
+	<!--custom checkbox & radio-->
+		
+	<script type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap-inputmask/bootstrap-inputmask.min.js}"></script>
+	
+	
+	<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/form-component.js}"></script>    
+	
+	<!--custom dataPicker-->
+    <script th:src="@{/Resources/bootstrap-datepicker-1.6.4-dist/js/bootstrap-datepicker.js}"></script>
+    
+    <!--custom select-->
+    <script th:src="@{/Resources/bootstrap-select/js/bootstrap-select.js}"></script>
+    
+    <script th:src="@{/js/layer.js}"></script>
+    <script type="text/javascript">
+    $(document).ready( function () {
+    	// get the list of all companies in the system
+    	$.ajax({
+            type: "GET",
+            url: 'company/getAll',
+            cache : false,
+            dataType: "json",
+            success: function(result) {
+            	for(var i=0;i<result.data.length;i++){
+            		if (result.data[i].active == 1) {
+            			var company = "<option value='" + result.data[i].id + "'>" + result.data[i].name + "</option>";
+                        $('#companyid').append(company);
+                        $('#companyid').selectpicker('refresh');
+            		}
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    	
+    	// get the list of all drivers in the system
+    	$.ajax({
+            type: "GET",
+            url: 'order/getAllDrivers',
+            cache : false,
+            dataType: "json",
+            success: function(result) {
+            	for(var i=0;i<result.length;i++){
+                    var driver = "<option value='" + result[i].id + "'>" + result[i].username + "</option>";
+                    $('#driverid').append(driver);
+                    $('#deliverydriverid').append(driver);
+                    $('#driverid').selectpicker('refresh');
+                    $('#deliverydriverid').selectpicker('refresh');
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    	
+    	// get the list of all packing persons in the system
+    	$.ajax({
+            type: "GET",
+            url: 'order/getAllPackingPerson',
+            cache : false,
+            dataType: "json",
+            success: function(result) {
+            	for(var i=0;i<result.length;i++){
+                    var packingperson = "<option value='" + result[i].id + "'>" + result[i].username + "</option>";
+                    $('#packingpersonid').append(packingperson);
+                    $('#packingpersonid').selectpicker('refresh');
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    });
+    
+    // add a new order to the server
+    function addOrder() {
+        var companyid = $("#companyid").val();
+        var presetpickupdate = $("#presetpickupdate").val();
+        var presetdeliverydate = $("#presetdeliverydate").val();
+        var driverid = $("#driverid").val();
+        var deliverydriverid = $("#deliverydriverid").val();
+        var packingpersonid = $("#packingpersonid").val();
+        if(companyid == ""){
+        	return layer.msg('Company can not be empty.', function(){});
+        }
+        if(presetpickupdate == ""){
+        	return layer.msg('Pick up date can not be empty.', function(){});
+        }
+        if(presetdeliverydate == ""){
+        	return layer.msg('Delivery date can not be empty.', function(){});
+        }
+        if(driverid == ""){
+        	return layer.msg('Pick-up driver can not be empty.', function(){});
+        }
+        if(deliverydriverid == ""){
+        	return layer.msg('Drop-off driver can not be empty.', function(){});
+        }
+        if(packingpersonid == ""){
+        	return layer.msg('Packing person can not be empty.', function(){});
+        }
+        var temppickupdate = presetpickupdate.split('/')[2]+presetpickupdate.split('/')[0]+presetpickupdate.split('/')[1];
+        var tempdeliverydate = presetdeliverydate.split('/')[2]+presetdeliverydate.split('/')[0]+presetdeliverydate.split('/')[1];
+        if (temppickupdate>tempdeliverydate) {
+        	return layer.msg('Pick-up date can not be later than Delivery date.', function(){});
+        }
+        
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url:'order/add',
+            data:$('#orderForm').serialize(),
+            async: false,
+            success: function(data) {
+                if(data=="success"){
+                    layer.msg('Save success.');
+                    formReset();
+                }else{
+                    layer.msg('Save fail.');
+                }
+            }
+        });
+    }
+    
+    // fill the address automatically when choosing a company
+    function loadAddress() {
+    	var companyid = $("#companyid").val();
+    	var param = "id=" + $("#companyid").val();
+    	
+    	$.ajax({
+            type: "GET",
+            url: 'company/getOne',
+            cache : false,
+            data : param,
+            dataType: "json",
+            success: function(result) {
+            	document.getElementById("address").value = result.address;
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Failed.");
+            }
+        });
+    }
+    
+    // reset the form
+    function formReset() {
+    	document.getElementById("companyid").options.selectedIndex = 0; 
+    	$("#companyid").selectpicker('refresh');
+    	document.getElementById("driverid").options.selectedIndex = 0; 
+    	$("#driverid").selectpicker('refresh');
+    	document.getElementById("deliverydriverid").options.selectedIndex = 0; 
+    	$("#deliverydriverid").selectpicker('refresh');
+    	document.getElementById("packingpersonid").options.selectedIndex = 0; 
+    	$("#packingpersonid").selectpicker('refresh');
+    	document.getElementById("presetpickupdate").value = "";
+    	document.getElementById("presetdeliverydate").value = "";
+    	document.getElementById("address").value = "";
+    }
+    </script>
+    
+  </body>
+</html>

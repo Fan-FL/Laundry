@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/jquery.dataTables.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/matrix-style.css}" />
+    <link rel="stylesheet" th:href="@{/css/matrix-media.css}" />
+    <link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <title>User management</title>
+</head>
+<body>
+
+<!--Header-part-->
+<div id="header">
+    <h1><a href="dashboard.html">Laundry admin</a></h1>
+</div>
+<!--close-Header-part-->
+
+<!--top-Header-menu-->
+<div th:include="common/top :: top"></div>
+<div th:include="common/menu :: menu"></div>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="current">Tables</a> </div>
+    </div>
+    <div class="container-fluid">
+        <hr/>
+        <div class="row-fluid">
+            <div class="span12">
+
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"><i class="icon-th"></i></span>
+                        <h5>User list</h5>
+                    </div>
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label >ID:</label>
+                            <input type="text" class="form-control" id="id-search" placeholder="ID:"/>
+                        </div>
+                        <div class="form-group">
+                            <label >Username:</label>
+                            <input type="text" class="form-control" id="name-search" placeholder="Username"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Status:</label>
+                            <select id="status-search"  class="form-control">
+                                <option value="">All</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                        <button type="button"  onclick="search();" class="btn btn-primary">Search</button>
+                        <button shiro:hasPermission="/users/add" type="button"  onclick="$('#addUser').modal();" class="btn btn-info" style="float: right; margin-right: 1px;">Add</button>
+                        <button shiro:hasPermission="/users/delete" type="button"  onclick="delByID();" class="btn btn-info" style="float: right; margin-right: 1px;">Delete</button>
+                        <button shiro:hasPermission="/users/saveUserRoles" type="button"  onclick="allotRole();" class="btn btn-info" style="float: right; margin-right: 1px;">Assign roles</button>
+                    </form>
+
+                    <div class="widget-content nopadding">
+                        <table class="table table-striped table-bordered" cellspacing="0" width="100%" id="datatable" >
+                            <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" class="checkall" />
+                                </th>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Is Active</th>
+                            </tr>
+                            </thead>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--pop up-->
+<div class="modal fade bs-example-modal-sm"  id="selectRole" tabindex="-1" role="dialog" aria-labelledby="selectRoleLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="selectRoleLabel">Assign roles</h4>
+            </div>
+            <div class="modal-body">
+                <form id="boxRoleForm" >
+                    <!--<div class='checkbox'>
+                    <label><input type='checkbox' id=''/>First One</label>
+                </div>
+                    -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" onclick="saveUserRoles();" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/pop up-->
+
+
+<!--add pop up-->
+<div class="modal fade" id="addUser" tabindex="-1" role="dialog" aria-labelledby="addroleLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addroleLabel">Add user</h4>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label  class="control-label">Username:</label>
+                        <input type="text" class="form-control" name="username" id="username" placeholder="Please input username"/>
+                        <span class="btn-action single glyphicons circle_question_mark" data-toggle="tooltip" data-placement="top" data-original-title="required"><i></i></span>
+                    </div>
+                    <div class="form-group">
+                        <label  class="control-label">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password"  placeholder="Please input a password with at least 6 characters"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" onclick="addUser();" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/add pop up-->
+
+
+
+<!--Footer-part-->
+<div class="row-fluid">
+    <div id="footer" class="span12"> 2017 &copy; yqj <a href="http://themedesigner.in/">Themedesigner.in</a> </div>
+</div>
+<!--end-Footer-part-->
+<script type="text/javascript" th:src="@{/js/jquery-1.11.2.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}" th:sr></script>
+<script th:src="@{/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<script type="text/javascript">
+    $(".checkall").click(function () {
+        var check = $(this).prop("checked");
+        $(".checkchild").prop("checked", check);
+    });
+    var table;
+    $(document).ready(function() {
+        table = $('#datatable').DataTable( {
+            "dom": '<"top"i>rt<"bottom"flp><"clear">',
+            "searching" : false,
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "serverSide": true,
+            "processing": true,
+            //"ajax": '${ss}/user/userList.do',
+            ajax : function(data, callback, settings) {
+                var param = getQueryCondition(data);
+
+                $.ajax({
+                    type: "GET",
+                    url: 'users',
+                    cache : false,
+                    data: param,
+                    dataType: "json",
+                    success: function(result) {
+                        var returnData = {};
+                        returnData.draw = result.draw;
+                        returnData.recordsTotal = result.recordsTotal;
+                        returnData.recordsFiltered = result.recordsFiltered;
+                        returnData.data = result.data;
+                        callback(returnData);
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Search failed");
+                    }
+                });
+            },
+            "columns": [
+                {
+                    "sClass": "text-center",
+                    "data": "id",
+                    "render": function (data, type, full, meta) {
+                        return '<input type="checkbox"  class="checkchild"  value="' + data + '" />';
+                    },
+                    "bSortable": false
+                },
+                { "data": "id" },
+                { "data": "username" },
+                { "data": "enable" },
+            ],
+            columnDefs:[
+                { "orderable": false, "targets": 1 },
+                { "orderable": false, "targets": 2 },
+                {
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        if(data==1){
+                            return "Active";
+                        }else{
+                            return "Inactive";
+                        }
+                    },
+                    "targets": 3
+                },
+            ],
+
+        } );
+
+
+
+    } );
+
+    function search(){
+        table.ajax.reload();
+    }
+
+    function getQueryCondition(data){
+        var param = {};
+        //order parameters
+        param.id = $("#id-search").val();//search condition
+        param.username = $("#name-search").val();//search condition
+        param.enable = $("#status-search").val();//search condition
+        //page parameters
+        param.start = data.start;
+        param.length = data.length;
+        param.draw = data.draw;
+        return param;
+    }
+
+    //pop up role window
+    function allotRole(){
+        var id = $(".checkchild:checked").val();
+        if ($(".checkchild:checked").length < 1)
+        {
+            layer.msg('Please select an entry');
+            return;
+        }
+        if ($(".checkchild:checked").length > 1)
+        {
+            layer.msg('Only one entry can be modified at a time');
+            return;
+        }
+        $.ajax({
+            async:false,
+            type : "POST",
+            data:{uid:id},
+            url: 'roles/rolesWithSelected',
+            dataType:'json',
+            success: function(data){
+                $("#boxRoleForm").empty();
+                var htm = "<input type='hidden' name='userid' value='"+id+"'>";
+                for(var i=0;i<data.length;i++){
+                    htm += "<div class='checkbox'><label><input type='checkbox' name='roleid' value='"+data[i].id+"'";
+                    if(data[i].selected==1){
+                        htm += " checked='checked'";
+                    }
+                    htm +="/>"+data[i].roledesc+"</label></div>";
+                }
+                $("#boxRoleForm").append(htm);
+            }
+        });
+
+        $('#selectRole').modal();
+    }
+
+    function saveUserRoles() {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url:'users/saveUserRoles',
+            data:$('#boxRoleForm').serialize(),
+            async: false,
+            success: function(data) {
+                if(data=="success"){
+                    layer.msg('Save successfully');
+                    $('#selectRole').modal('hide');
+                }else{
+                    layer.msg('Save failed');
+                    $('#selectRole').modal('hide');
+                }
+            }
+        })
+    }
+
+
+    function addUser() {
+        var username = $("#username").val();
+        var password = $("#password").val();
+        if(username == "" || username == undefined || username == null){
+            return layer.msg('Username cannot be empty', function(){
+            });
+        }
+        if(password.length<6||password.length>=16){
+            return layer.msg('Password length is 6-16', function(){
+            });
+        }
+
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url:'users/add',
+            data:$('#userForm').serialize(),
+            async: false,
+            success: function(data) {
+                if(data=="success"){
+                    layer.msg('Save successfully');
+                    table.ajax.reload();
+                    $('#addUser').modal('hide');
+                }else if(data="error"){
+                    layer.msg('The user already exists');
+                    $('#addUser').modal('hide');
+                }else{
+                    layer.msg('Save failed');
+                    $('#addUser').modal('hide');
+                }
+            }
+        });
+    }
+
+    function delByID() {
+        var id = $(".checkchild:checked").val();
+        if ($(".checkchild:checked").length < 1)
+        {
+            layer.msg('Please select an entry');
+            return;
+        }
+        if ($(".checkchild:checked").length > 1)
+        {
+            layer.msg('Only one entry can be modified at a time');
+            return;
+        }
+        layer.confirm('Are you sure to delete the user?',{title:'Info',btn: ['Affirm','Cancel']},
+            function(){
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url:'users/delete',
+                data:{id:id},
+                async: false,
+                success: function(data) {
+                    if(data=="success"){
+                        layer.msg('Delete successfully');
+                        table.ajax.reload();
+                    }else{
+                        layer.msg('Delete failed');
+                    }
+                }
+            });
+        });
+
+
+
+    }
+
+</script>
+
+</body>
+</html>

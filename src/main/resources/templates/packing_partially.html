@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry-Quoll</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/bootstrap.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <link th:href="@{/Resources/awesome-bootstrap-checkbox-master/awesome-bootstrap-checkbox.css}" rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style.css}" rel="stylesheet">
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style-responsive.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/to-do.css}">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script th:src="@{https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}"></script>
+      <script th:src="@{https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js}"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+  <section id="container" >
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+      <!--header start-->
+      <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" style="color:white" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
+            <!--logo start-->
+            <a th:href="@{unpacked_all}" class="logo"><b>COMPLETE WORKWEAR</b></a>
+            <!--logo end-->
+            <div class="top-menu">
+            	<ul class="nav pull-right top-menu">
+                  <li><a class="logout" th:href="@{/logout}">Logout</a></li>
+            	</ul>
+            </div>
+        </header>
+      <!--header end-->
+
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+
+              	  <p class="centered"><img th:src="@{/Resources/dashgumfree_v2/Theme/assets/img/ui-sam.jpg}" class="img-circle" width="60"></a></p>
+              	  <h5 class="centered">Packing Staff</h5>
+
+              	<li class="mt">
+                      <a th:href="@{unpacked_all}">
+                         <i class="fa fa-tasks"></i>
+                          <span>Unpacked Orders</span>
+                      </a>
+                  </li>
+                  
+                  <li class="mt">
+                      <a class="active" th:href="@{partially_all}">
+                         <i class="fa fa-warning"></i>
+                          <span>Partially Packed Orders</span>
+                      </a>
+                  </li>
+                  
+                  <li class="mt">
+                      <a th:href="@{packed_all}">
+                          <i class="fa fa-check-square-o "></i>
+                          <span>Packed Orders</span>
+                      </a>
+                  </li>
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper site-min-height">
+          	<h3><i class="fa fa-angle-right"></i> Partially Packed Order</h3>
+          	
+			<input type="text" th:value="${orderid}" id="orderid" hidden="hidden">
+			<input type="text" value="" id="addstepgname" hidden="hidden">
+          	<!-- COMPLEX TO DO LIST -->
+              <div class="row mt">
+                  <div class="col-md-12">
+                      <section class="task-panel tasks-widget">
+	                	    <div class="panel-heading">
+	                        <div class="pull-left" id="company"></div>
+	                        <br>
+	                 	</div>
+                        <div class="panel-body">
+                        		<div class="task-content">
+                                 <ul class="task-list" id="garmentlist"> </ul>
+                                    <!-- Modal -->
+								<div class="modal fade" id="addStepModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								  <div class="modal-dialog">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								        <h5 class="modal-title">Add Additional Step</h5>
+								      </div>
+								      <div class="modal-body">
+								      	<div class="row">
+								      		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="number" id="addstepnumber" value="1" min="1">&nbsp;&nbsp;items
+								      	</div><br>
+								        <div class="radio-inline">
+										  <label>
+										    <input type="radio" name="reason" id="optionsRadios1" value="missing">
+										    Missing
+										  </label>
+										</div>
+										<div class="radio-inline">
+										  <label>
+										    <input type="radio" name="reason" id="optionsRadios2" value="dirty">
+										    Dirty
+										  </label>
+										</div>
+										<div class="radio-inline">
+										  <label>
+										    <input type="radio" name="reason" id="optionsRadios3" value="damaged">
+										    Damaged
+										  </label>
+										</div>
+										<div class="radio-inline">
+										  <label>
+										    <input type="radio" name="reason" id="optionsRadios4" value="other">
+										    Other&nbsp;&nbsp;
+										    <input type="text" id="otherReason">
+										  </label>
+										</div>
+
+								      </div>
+								      <div class="modal-footer">
+								        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+								        <button type="button" class="btn btn-info" onclick="addstep()">Complete</button>
+								      </div>
+								    </div>
+								  </div>
+								</div>
+								<div class="row mt">
+					          		<div class="col-lg-12">
+					                 		<form class="form-horizontal style-form" method="get" id="orderform">
+					                         <div class="form-group">
+					                              <label class="col-sm-2 control-label">Notes</label>
+					                          	  <div class="col-sm-10">
+					                              	<textarea class="form-control" id="notes" rows="3"></textarea>
+					                              </div>
+					                          </div>
+					                          <div class="btn-group btn-group-justified">
+					                          	<div class="btn-group">
+						                          <a th:href="@{partially_all}"><button type="button" class="btn btn-default" >Cancel</button></a>
+						                        </div>
+						                        <div class="btn-group">
+						                          <button type="button" class="btn btn-info" onclick="finishPack();">Complete</button>
+						                        </div>
+						                        <div class="btn-group">
+						                          <button type="button" class="btn btn-danger" onclick="forcePack();">Force Pack</button>
+						                        </div>
+					                          </div>  
+					                 		</form>
+					          		</div><!-- /col-lg-12 -->
+					          	</div><!-- /row -->	
+                               </div>                                  
+                              </div>
+                              
+                             
+                      </section>
+                  </div><!-- /col-md-12-->
+              </div><!-- /row -->
+
+		</section><! --/wrapper -->
+      </section><!-- /MAIN CONTENT -->
+
+      <!--main content end-->
+  </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.ui.touch-punch.min.js}"></script>
+    <script class="include" type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.dcjqaccordion.2.7.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.scrollTo.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.nicescroll.js}" type="text/javascript"></script>
+
+
+    <!--common script for all pages-->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/common-scripts.js}"></script>
+
+    <!--script for this page-->
+	<script th:src="@{http://code.jquery.com/ui/1.10.3/jquery-ui.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/tasks.js}" type="text/javascript"></script>
+    <script th:src="@{/js/layer.js}"></script>
+    
+    <script>
+    
+      jQuery(document).ready(function() {
+          TaskList.initTaskWidget();
+      });
+      
+      var itemlist = [];
+      
+      $(document).ready(function() {
+  		
+ 		 var param = "orderid=" + document.getElementById("orderid").value;
+ 		
+ 		 $.ajax({
+            type: "GET",
+            url: 'order/getOrderDetail',
+            cache : false, 
+            data: param,
+            dataType: "json",
+            success: function(result) {
+            		var companyname = result.order.company.name;
+          		addCompanyName(companyname);
+          		var items = result.items;
+          		for(var i = 0; i < items.length; i++){
+          	 		var garmentname = items[i].garment.shortname;
+          	 		var garmid = items[i].garmentid;
+          	 		var pickupnumber = items[i].pickupnumber;
+          	 		var packnumber = items[i].packnumber;
+          	 		addGarment(garmentname,pickupnumber,packnumber,garmid,i);
+          	 		itemlist.push({
+          	 			garmentid: garmid,
+          	 			packnumber: packnumber
+          	 	    });
+          	 	}
+          		TaskList.initTaskWidget();
+          		
+          		var notes = result.order.notes;
+          		showNotes(notes);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Search Fail");
+            }
+        });
+ 	} );
+      
+    function addCompanyName(companyname){
+  		var name = document.createElement("h4");
+  		name.className = "mb";
+  		var textname = document.createTextNode(companyname);
+  		name.appendChild(textname);
+  		document.getElementById("company").appendChild(name);
+  	}
+    
+    function addGarment(garmentname,pickupnumber,packnumber,garmentid,checkboxid){
+		var node = document.createElement("li");
+		var checkboxdiv = document.createElement("div");
+		checkboxdiv.className = "task-checkbox";
+		var checkbox = document.createElement("input");
+		checkbox.type = "checkbox";
+		checkbox.className = "list-child";
+		checkbox.id = "checkbox" + checkboxid;
+		var task = document.createElement("div");
+		task.className = "task-title";
+		var col1 = document.createElement("div");
+		col1.className = "col-sm-2 col-xs-6";
+		var name = document.createElement("span");
+		name.className = "task-title-sp";
+		var col2 = document.createElement("div");
+		col2.className = "col-sm-2 col-xs-6";
+		var qty = document.createElement("span");
+		qty.className = "task-title-sp";
+		var col3 = document.createElement("div");
+		col3.className = "col-sm-1 col-xs-6";
+		var packedqty = document.createElement("span");
+		packedqty.className = "task-title-sp";
+		var col4 = document.createElement("div");
+		col4.className = "col-sm-2 col-xs-6";
+		var inputqty = document.createElement("input");
+		inputqty.type = "number";
+		inputqty.className = "form-control";
+		inputqty.id = garmentid;
+		inputqty.min = "0";
+		inputqty.max = pickupnumber;
+		
+		var text1 = document.createTextNode(garmentname);
+		var text2 = document.createTextNode("Qty:"+pickupnumber);
+		var text3 = document.createTextNode("Packed Qty:");
+		
+		if(packnumber != pickupnumber){		
+			var addstep = document.createElement("div");
+			addstep.className = "pull-right";
+			var button = document.createElement("button");
+			button.className = "btn btn btn-warning btn-sm";
+			var buttonid = "button"+garmentid;
+			button.id = buttonid;
+			button.onclick = function(){
+				$('#addStepModal').modal();
+				document.getElementById("addstepgname").value = garmentname;
+	        };
+			var text4 = document.createTextNode("Add Additional Step");
+			button.appendChild(text4);
+			addstep.appendChild(button);
+			task.appendChild(addstep);
+		}
+		else{
+			node.className = "task-done";
+			inputqty.disabled="disabled";
+			checkbox.checked = "checked";
+			checkbox.disabled = "disabled";
+		}
+		
+		checkboxdiv.appendChild(checkbox);
+		name.appendChild(text1);
+		qty.appendChild(text2);
+		packedqty.appendChild(text3);
+		col1.appendChild(name);
+		col2.appendChild(qty);
+		col3.appendChild(packedqty);
+		col4.appendChild(inputqty);	
+		task.appendChild(col1);
+		task.appendChild(col2);
+		task.appendChild(col3);
+		task.appendChild(col4);
+		node.appendChild(checkboxdiv);
+		node.appendChild(task);
+		document.getElementById("garmentlist").appendChild(node);
+		document.getElementById(garmentid).value = packnumber;
+	}
+    
+    function addstep(){
+    		var number = $("#addstepnumber").val();
+    		var garmentname = $("#addstepgname").val();
+    		var reason = $("input[name='reason']:checked").val();
+    		if(reason == "other"){
+    			reason = $("#otherReason").val()
+    		}
+    		var addnotes = number + " " + garmentname + " " + reason + ", ";
+    		var notes = document.getElementById("notes");
+    		notes.innerHTML += addnotes;
+    		$("notes").text(addnotes);
+    		$('#addStepModal').modal('hide');
+    		$("#addstepnumber").val("1");
+    }
+    
+    function showNotes(textnotes){
+    		var notes = document.getElementById("notes");
+    		notes.innerHTML = textnotes;
+    }
+    
+    function finishPack(){
+    		for (var i = 0; i < itemlist.length; i++){
+			var id = itemlist[i].garmentid;
+			var number = document.getElementById(id).value;
+			if(number=="")
+				number = 0;
+			itemlist[i].packnumber = number;
+		}
+		
+		var param = {};
+		param.id = document.getElementById("orderid").value;
+		param.orderitemsList = itemlist;
+		param.notes = document.getElementById("notes").value;
+		
+		$.ajax({
+            cache: true,
+            type: "POST",
+            url:'order/submitOrder',
+            contentType : 'application/json;charset=utf-8',
+            dataType:"text",
+            data:JSON.stringify(param),
+            async: false,
+            success: function(data) {
+        		if(data=="success"){
+                layer.msg('Save success.');
+                var t=setTimeout('window.location.href="partially_all"',1000);
+            }else{
+                layer.msg('Save fail.');
+            }
+        }
+        }); 
+    }
+    
+    function forcePack(){
+    		for (var i = 0; i < itemlist.length; i++){
+			var id = itemlist[i].garmentid;
+			var number = document.getElementById(id).value;
+			if(number=="")
+				number = 0;
+			itemlist[i].packnumber = number;
+		}
+		
+		var param = {};
+		param.id = document.getElementById("orderid").value;
+		param.orderitemsList = itemlist;
+		param.notes = document.getElementById("notes").value;
+		
+		$.ajax({
+            cache: true,
+            type: "POST",
+            url:'order/forceToPacked',
+            contentType : 'application/json;charset=utf-8',
+            dataType:"text",
+            data:JSON.stringify(param),
+            async: false,
+            success: function(data) {
+        		if(data=="success"){
+                layer.msg('Save success.');
+                var t=setTimeout('window.location.href="partially_all"',1000);
+            }else{
+                layer.msg('Save fail.');
+            }
+        }
+        }); 
+    }
+      
+    </script>
+    
+  </body>
+</html>

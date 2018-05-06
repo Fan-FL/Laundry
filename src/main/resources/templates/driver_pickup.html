@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry-Quoll</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/bootstrap.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <link th:href="@{/Resources/bootstrap-datepicker-1.6.4-dist/css/bootstrap-datepicker.css}" rel="stylesheet" />
+        
+    <!-- Custom styles for this template -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style.css}" rel="stylesheet">
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style-responsive.css}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script th:src="@{https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}"></script>
+      <script th:src="@{https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js}"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+  <section id="container" >
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+      <!--header start-->
+      <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" style="color:white" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
+            <!--logo start-->
+            <a th:href="@{pickup}" class="logo"><b>COMPLETE WORKWEAR</b></a>
+            <!--logo end-->
+            <div class="top-menu">
+            	<ul class="nav pull-right top-menu">
+                    <li><a class="logout" th:href="@{/logout}">Logout</a></li>
+            	</ul>
+            </div>
+        </header>
+      <!--header end-->
+
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+
+              	  <p class="centered"><img th:src="@{/Resources/dashgumfree_v2/Theme/assets/img/ui-sam.jpg}" class="img-circle" width="60"></a></p>
+              	  <h5 class="centered">Driver</h5>
+
+                  <li class="mt">
+                      <a class="active" th:href="@{pickup}">
+                          <i class="fa fa-truck"></i>
+                          <span>Pick-up Orders</span>
+                      </a>
+                  </li>
+
+                  <li class="mt">
+                      <a th:href="@{dropoff}">
+                          <i class="fa fa-truck"></i>
+                          <span>Drop-off Orders</span>
+                      </a>
+                  </li>
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper site-min-height">
+          	<h3><i class="fa fa-angle-right"></i> Pick-up Orders</h3>
+	       	<div class="row mt">
+				<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+					<div class="input-group date" data-provide="datepicker">
+						<input type="text" class="form-control" id="id-date" onchange="getOrders();">
+					    <div class="input-group-addon">
+					        <span class="glyphicon glyphicon-calendar"></span>
+					    </div>
+					</div>
+				</div>
+			</div><!-- /row -->
+
+			<br>
+			
+		    <div id='pickuporders'></div>
+			
+
+		</section><! --/wrapper -->
+      </section><!-- /MAIN CONTENT -->
+
+      <!--main content end-->
+  </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.ui.touch-punch.min.js}"></script>
+    <script class="include" type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.dcjqaccordion.2.7.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.scrollTo.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.nicescroll.js}" type="text/javascript"></script>
+ 	<script th:src="@{/Resources/bootstrap-datepicker-1.6.4-dist/js/bootstrap-datepicker.js}"></script>
+
+    <!--common script for all pages-->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/common-scripts.js}"></script>
+    <script th:src="@{/js/layer.js}"></script>
+    
+    <script type="text/javascript">
+	    $(document).ready(function(){
+	    	 	var now = new Date();
+	        var month = (now.getMonth() + 1);               
+	        var day = now.getDate();
+	        if(month < 10) 
+	            month = "0" + month;
+	        if(day < 10) 
+	            day = "0" + day;
+	        var today = month + '/' + day + '/' + now.getFullYear();
+	        document.getElementById("id-date").value = today;
+	        getOrders();
+	    });
+	    
+	    function getOrders()
+	    {
+	    		var param = getDate();
+	    	
+	    		$.ajax({
+                type: "GET",
+                url: 'order/getAllPickup',
+                cache : false, 
+                data: param,
+                dataType: "json",
+                success: function(result) {
+                	
+                		$("#pickuporders").empty();
+                		var todoorders = result.todo;
+                		var finishedorders = result.finished;
+                		
+                		if(todoorders.length+finishedorders.length == 0){
+                			var date = $("#id-date").val();
+                			layer.msg('No order on '+date+'.',{time:800});
+                		}
+                		
+                		for(var i = 0; i < todoorders.length; i++){
+                			var textcompany1 = todoorders[i].company.name;
+                		    var textdelivery1 = todoorders[i].address;
+                		    var textstatus1 = todoorders[i].status;
+                		    var orderid1 = todoorders[i].id;
+                		    addOrder(textcompany1,textdelivery1,textstatus1,orderid1);
+                		}
+                		
+                		for(var i = 0; i < finishedorders.length; i++){
+                			var textcompany2 = finishedorders[i].company.name;
+                		    var textdelivery2 = finishedorders[i].address;
+                		    var textstatus2 = finishedorders[i].status;
+                		    var orderid2 = finishedorders[i].id;
+                		    addOrder(textcompany2,textdelivery2,textstatus2,orderid2);
+                		}
+                		
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Search Fail");
+                }
+            });
+	    }
+	    
+	    function getDate(){
+	    	 	var param = {};
+	        param.presetpickupdate = $("#id-date").val();
+	        return param;
+	    }
+	    
+	    function addOrder(textcompany,textdelivery,textstatus,orderid){
+		    var node = document.createElement("div");
+		    node.className = "col-lg-12 ds";
+		    var href = document.createElement("a");
+		    var desc = document.createElement("div");
+		    desc.className = "desc";
+		    var col1 = document.createElement("div");
+ 		    col1.className = "col1";
+		    var company = document.createElement("span");
+		    company.className = "company";
+		    var col2 = document.createElement("div");
+		    col2.className = "col2";
+		    var deliverypoint = document.createElement("span");
+		    deliverypoint.className = "delivery-point";
+		    var col3 = document.createElement("div");
+		    col3.className = "col3";
+		    var status = document.createElement("div");
+		    var text1 = document.createTextNode(textcompany);
+		    var text2 = document.createTextNode(textdelivery);
+
+		    if(textstatus=="0"){
+		   	 	status.className = "label label-warning";
+		   		var text3 = document.createTextNode("To Do");
+		   	 	href.setAttribute("href","pickup_todo?orderid="+orderid);
+		    }
+		    else{
+		    		status.className = "label label-success";
+		    		var text3 = document.createTextNode("Finished");
+		    		href.setAttribute("href","pickup_finished?orderid="+orderid);
+		    }
+		    
+		    
+		    company.appendChild(text1);
+		    deliverypoint.appendChild(text2);
+		    status.appendChild(text3);
+		    
+		    col1.appendChild(company);
+		    col2.appendChild(deliverypoint);
+		    col3.appendChild(status);
+		    
+		    href.appendChild(col1);
+		    href.appendChild(col2);
+		    href.appendChild(col3); 
+		    desc.appendChild(href);
+    			node.appendChild(desc);
+    			document.getElementById("pickuporders").appendChild(node);
+	    }
+	    
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/jquery.dataTables.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/matrix-style.css}" />
+    <link rel="stylesheet" th:href="@{/css/matrix-media.css}" />
+    <link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+    <title>Resource management</title>
+</head>
+<body>
+
+<!--Header-part-->
+<div id="header">
+    <h1><a href="dashboard.html">Laundry Admin</a></h1>
+</div>
+<!--close-Header-part-->
+
+<!--top-Header-menu-->
+<div th:include="common/top :: top"></div>
+<div th:include="common/menu :: menu"></div>
+
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb"> <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a> <a href="#" class="current">Tables</a> </div>
+    </div>
+    <div class="container-fluid">
+        <hr>
+        <div class="row-fluid">
+            <div class="span12">
+
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"><i class="icon-th"></i></span>
+                        <h5>Resource list</h5>
+                    </div>
+                    <form class="form-inline">
+                        <button type="button" shiro:hasPermission="/resources/add" onclick="$('#resourcesModal').modal();" class="btn btn-info" style="float: right; margin-right: 1px;">add</button>
+                        <button type="button" shiro:hasPermission="/resources/delete" onclick="delById();" class="btn btn-info" style="float: right; margin-right: 1px;">delete</button>
+                        </form>
+                    <table class="table table-bordered data-table" id="datatable" >
+                        <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" class="checkall" />
+                            </th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Parent</th>
+                            <th>URL</th>
+                            <th>Type</th>
+                            <th>Order</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!--pop up-->
+<div class="modal fade bs-example-modal-sm"  id="selectResources" tabindex="-1" role="dialog" aria-labelledby="selectRoleLabel">
+    <div class="modal-dialog modal-sm" role="document" style="height: 600px; "  >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="selectRoleLabel">分配权限</h4>
+            </div>
+            <div class="modal-body">
+                <form id="boxRoleForm" >
+                    <ul id="treeDemo" class="ztree"></ul>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" onclick="saveRoleResources();" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--pop up-->
+
+
+<!--add pop up-->
+<div class="modal fade" id="resourcesModal" tabindex="-1" role="dialog" aria-labelledby="addroleLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addroleLabel">Add Resource</h4>
+            </div>
+            <div class="modal-body">
+                <form id="resourcesForm">
+                    <div class="form-group">
+                        <label  class="control-label">Name:</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Input resource name"/>
+                    </div>
+                    <div class="form-group">
+                        <label  class="control-label">Parent ID:</label>
+                        <input type="text" class="form-control" id="parentId" name="parentid"  placeholder="Input Parent ID">
+                    </div>
+                    <div class="form-group">
+                        <label  class="control-label">URL:</label>
+                        <input type="text" class="form-control" id="resUrl" name="resurl"  placeholder="Input URL">
+                    </div>
+                    <div class="form-group">
+                        <label  class="control-label">Type:</label>
+                        <select class="form-control" name="type" id="type" >
+                            <option value="1">Menu</option>
+                            <option value="2"Button</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Order:</label>
+                        <input type="text" class="form-control" id="sort" name="sort"  placeholder="Input order">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" onclick="addResources();" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--add pop up-->
+
+
+<!--Footer-part-->
+<div class="row-fluid">
+    <div id="footer" class="span12"> 2017 &copy; yqj <a href="http://themedesigner.in/">Themedesigner.in</a> </div>
+</div>
+<!--end-Footer-part-->
+<script type="text/javascript" th:src="@{/js/jquery-1.11.2.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}" th:sr></script>
+<script th:src="@{/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<script type="text/javascript">
+    var table;
+    $(".checkall").click(function () {
+        var check = $(this).prop("checked");
+        $(".checkchild").prop("checked", check);
+    });
+    $(document).ready(function() {
+        table = $('#datatable').DataTable( {
+            "dom": '<"top"i>rt<"bottom"flp><"clear">',
+            "searching" : false,
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "serverSide": true,
+            "processing": true,
+
+            "ajax": 'resources',
+            "columns": [
+                {
+                    "sClass": "text-center",
+                    "data": "id",
+                    "render": function (data, type, full, meta) {
+                        return '<input type="checkbox"  class="checkchild"  value="' + data + '" />';
+                    },
+                    "bSortable": false
+                },
+                { "data": "id" },
+                { "data": "name" },
+                { "data": "parentid" },
+                { "data": "resurl" },
+                { "data": "type" },
+                { "data": "sort" },
+            ],
+            columnDefs:[
+                { "orderable": false, "targets": 1 },
+                { "orderable": false, "targets": 2 },
+                { "orderable": false, "targets": 3 },
+                { "orderable": false, "targets": 4 },
+                {
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        if(data==1){
+                            return "Menu";
+                        }else if(data==2){
+                            return "Button";
+                        }else{
+                            return "Other";
+                        }
+                    },
+                    "targets": 5
+                },
+                { "orderable": false, "targets": 6 }
+            ],
+
+        } );
+
+
+
+    } );
+
+    function search(){
+        table.ajax.reload();
+    }
+
+    //Add user
+    function addResources() {
+        var name = $("#name").val();
+        var parentId = $("#parentId").val();
+        var resUrl = $("#resUrl").val();
+        var sort = $("#sort").val();
+
+        if(name == "" || name == undefined || name == null){
+            return layer.msg('Recource name cannot be empty', function(){
+            });
+        }
+        if(parentId == "" || parentId == undefined || parentId == null){
+            return layer.msg('Parent ID cannot be empty', function(){
+            });
+        }
+        if(resUrl == "" || resUrl == undefined || resUrl == null){
+            return layer.msg('URL cannot be empty', function(){
+            });
+        }
+        if(sort == "" || sort == undefined || sort == null){
+            return layer.msg('Order cannot be empty', function(){
+            });
+        }
+
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url:'resources/add',
+            data:$('#resourcesForm').serialize(),//
+            async: false,
+            success: function(data) {
+                if(data=="success"){
+                    layer.msg('Save successfully');
+                    table.ajax.reload();
+                    $('#resourcesModal').modal('hide');
+                }else{
+                    layer.msg('Save failed');
+                    $('#resourcesModal').modal('hide');
+                }
+            }
+        });
+    }
+
+    function delById() {
+        var id = $(".checkchild:checked").val();
+        if ($(".checkchild:checked").length < 1)
+        {
+            layer.msg('Please select an entry');
+            return;
+        }
+        if ($(".checkchild:checked").length > 1)
+        {
+            layer.msg('Only one entry can be modified at a time');
+            return;
+        }
+        layer.confirm('Are you sure to delete the resource?',{title:'Info',btn: ['Affirm','Cancel']},
+            function(){
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url:'resources/delete',
+                data:{id:id},
+                async: false,
+                success: function(data) {
+                    if(data=="success"){
+                        layer.msg('Delete successfully');
+                        table.ajax.reload();
+                    }else{
+                        layer.msg('Delete failed');
+                    }
+                }
+            });
+        });
+
+    }
+
+
+</script>
+
+</body>
+</html>

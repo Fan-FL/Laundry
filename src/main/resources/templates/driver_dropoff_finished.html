@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry-Quoll</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/bootstrap.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+        
+    <!-- Custom styles for this template -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style.css}" rel="stylesheet">
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style-responsive.css}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script th:src="@{https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}" ></script>
+      <script th:src="@{https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js}" ></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+  <section id="container" >
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+      <!--header start-->
+      <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" style="color:white" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
+            <!--logo start-->
+            <a th:href="@{pickup}" class="logo"><b>COMPLETE WORKWEAR</b></a>
+            <!--logo end-->
+            <div class="top-menu">
+            	<ul class="nav pull-right top-menu">
+                 <li><a class="logout" th:href="@{/logout}">Logout</a></li>
+            	</ul>
+            </div>
+        </header>
+      <!--header end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+              
+              	  <p class="centered"><img th:src="@{/Resources/dashgumfree_v2/Theme/assets/img/ui-sam.jpg}" class="img-circle" width="60"></a></p>
+              	  <h5 class="centered">Driver</h5>
+
+                  <li class="mt">
+                      <a th:href="@{pickup}">
+                          <i class="fa fa-truck"></i>
+                          <span>Pick-up Orders</span>
+                      </a>
+                  </li>
+                  
+                  <li class="mt">
+                      <a class="active" th:href="@{dropoff}">
+                          <i class="fa fa-truck"></i>
+                          <span>Drop-off Orders</span>
+                      </a>
+                  </li>
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper site-min-height">
+          	<h3><i class="fa fa-angle-right"></i> Drop-off Orders</h3>      	
+			
+			<input type="text" th:value="${orderid}" id="orderid" hidden="hidden">
+			<div class="row mt">
+          		<div class="col-lg-12">
+          			<div class="form-panel">
+          				<div id="todoorder"></div>
+                 		<form class="form-horizontal style-form" method="get" id="orderform">
+                 		<div id="garmentlist"></div>
+                         
+                         <div class="btn-group btn-group-justified">
+	                        <div class="btn-group">
+	                          <a th:href="@{dropoff}"><button type="button" class="btn btn-info">Return</button></a>
+	                        </div>
+                          </div>
+                          
+                 		</form>
+          			</div><!-- /form-panel -->
+          		</div><!-- /col-lg-12 -->
+          	</div><!-- /row -->
+ 			
+		</section><! --/wrapper -->
+      </section><!-- /MAIN CONTENT -->
+
+      <!--main content end-->
+  </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.js}" ></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap.min.js}" ></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}" ></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.ui.touch-punch.min.js}" ></script>
+    <script class="include" type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.dcjqaccordion.2.7.js}" ></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.scrollTo.min.js}" ></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.nicescroll.js}"  type="text/javascript"></script>
+
+    <!--common script for all pages-->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/common-scripts.js}" ></script>
+    
+    <script type="text/javascript">
+    
+    
+    $(document).ready(function() {
+		
+    		var param = "orderid=" + document.getElementById("orderid").value;
+		
+		 $.ajax({
+            type: "GET",
+            url: 'order/dropoff_todo',
+            cache : false, 
+            data: param,
+            dataType: "json",
+            success: function(result) {
+            		var companyname = result.order.company.name;
+           		addCompanyName(companyname);
+           	 	var companyaddress = result.order.address;
+           	 	addAddress(companyaddress);
+           	 	
+           	 	var garments = result.items;
+           	 	for(var i = 0; i < garments.length; i++){
+           	 		var garmentname = garments[i].garment.shortname;
+           	 		var garmentnum = garments[i].pickupnumber;
+           	 		addGarment(garmentname,garmentnum);
+           	 	}
+           	 	
+	           	var notes = result.order.notes;
+	     	 	addGarment("Notes",notes);
+            		
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Search Fail");
+            }
+        });
+		
+	} );
+    
+    function addCompanyName(companyname){
+		var name = document.createElement("h4");
+		name.className = "mb";
+		var textname = document.createTextNode(companyname);
+		name.appendChild(textname);
+		document.getElementById("todoorder").appendChild(name);
+	} 
+    
+    function addAddress(companyaddress){
+		var address = document.createElement("h5");
+		address.className = "mb";
+		var textaddress = document.createTextNode("Address: "+companyaddress);
+		address.appendChild(textaddress);
+		document.getElementById("todoorder").appendChild(address);
+	} 
+	
+    function addGarment(garmentname,garmentnumber){
+	    	if(garmentnumber == null)
+				garmentnumber = "";
+    		
+		var node = document.createElement("div");
+		node.className = "form-group";
+		var name = document.createElement("label");
+		name.className = "col-xs-4 control-label";
+		var textname = document.createTextNode(garmentname);
+		
+		var number = document.createElement("label");
+		number.className = "col-xs-4 control-label";
+		var textnumber = document.createTextNode(garmentnumber);
+		
+		name.appendChild(textname);
+		number.appendChild(textnumber);
+		node.appendChild(name);
+		node.appendChild(number);
+		document.getElementById("garmentlist").appendChild(node);
+		
+	}
+    
+    </script>
+    
+  </body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry-Quoll</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/bootstrap.css}" rel="stylesheet">
+    <!--external css-->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style.css}" rel="stylesheet">
+    <link th:href="@{/Resources/dashgumfree_v2/Theme/assets/css/style-responsive.css}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script th:src="@{https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js}"></script>
+      <script th:src="@{https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js}"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+  <section id="container" >
+      <!-- **********************************************************************************************************************************************************
+      TOP BAR CONTENT & NOTIFICATIONS
+      *********************************************************************************************************************************************************** -->
+      <!--header start-->
+      <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" style="color:white" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
+            <!--logo start-->
+            <a th:href="@{view_orders}" class="logo"><b>COMPLETE WORKWEAR</b></a>
+            <!--logo end-->
+            <div class="top-menu">
+            	<ul class="nav pull-right top-menu">
+                    <li><a class="logout" th:href="@{/logout}">Logout</a></li>
+            	</ul>
+            </div>
+        </header>
+      <!--header end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+              
+              	  <p class="centered"><img th:src="@{/Resources/dashgumfree_v2/Theme/assets/img/ui-sam.jpg}" class="img-circle" width="60" src=""></a></p>
+              	  <h5 class="centered">Office person</h5>
+
+                  <li class="sub-menu">
+                      <a th:href="@{javascript:;}" >
+                          <i class="fa fa-tasks"></i>
+                          <span>Orders</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a  th:href="@{view_orders.html}">View orders</a></li>
+                          <li><a  th:href="@{manage_recurring_orders.html}">Manage recurring orders</a></li>
+                          <li><a  th:href="@{add_nonrecurring_orders.html}">Add non-recurring orders</a></li>
+                      </ul>
+                  </li>
+
+                  <li class="sub-menu">
+                      <a th:href="@{javascript:;}" >
+                          <i class="fa fa-users"></i>
+                          <span>Customers</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a  th:href="@{view_customers.html}">View customers</a></li>
+                          <li><a  th:href="@{add_new_customer.html}">Add new customer</a></li>
+                      </ul>
+                  </li>  
+
+                  <li class="sub-menu">
+                      <a th:href="@{monthly_report.html}">
+                          <i class="fa fa-bar-chart-o"></i>
+                          <span>Monthly report</span>
+                      </a>
+                  </li>                
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN CONTENT
+      *********************************************************************************************************************************************************** -->
+      <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper site-min-height">
+          	<h3><i class="fa fa-angle-right"></i> Add new customer</h3>
+
+              <!-- BASIC FORM ELELEMNTS -->
+          	<div class="row mt">
+          		<div class="col-lg-12">
+                  <div class="form-panel">
+                  	  <h4 class="mb"></h4>
+                      <form class="form-horizontal style-form" method="get" id="customerForm">
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Name</label>
+                              <div class="col-sm-10">
+                                  <input type="text" class="form-control" id="name" name="name">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Delivery point</label>
+                              <div class="col-sm-10">
+                                  <input type="text" class="form-control" id="address" name="address">
+                              </div>
+                          </div>
+                          <div class="form-group">
+                          	  <label class="col-sm-2 col-sm-2 control-label">Laundry label</label>
+	                              <div class="col-sm-10">
+		                           <table class="table  table-bordered" id="para_table">  
+									    <tr>  
+									        <th style="text-align:center" width="200">Full name</th>  
+									        <th style="text-align:center" width="200">Short name</th>  
+									        <th style="text-align:center" width="100">Operation</th>  
+									    </tr>  
+									    <tr>  
+									      <td  style="text-align:center; " onclick="tdclick(this)"></td>  
+									      <td  style="text-align:center; " onclick="tdclick(this)"></td>  
+									      <td   style="text-align:center; " onclick="deletetr(this)">  
+									        <button type="button"  class="btn btn-danger btn-xs">Delete</button>  
+									      </td>  
+									    </tr>  
+									</table>  
+									  
+									<div id="addtrdiv" style="float: right;">  
+									    <button type="button" class="btn btn-theme btn-xs" onclick="addtr()">Add new label</button>  
+									</div>
+								</div> 
+						  </div>
+                          <div class="form-group">
+                              <label class="col-sm-2 col-sm-2 control-label">Active</label>
+                              <div class="col-sm-6">
+                                  <div class="switch switch-square"
+                                       data-on-label="<i class=' fa fa-check'></i>"
+                                       data-off-label="<i class='fa fa-times'></i>">
+                                      <input type="checkbox" checked=""  id="active" name="active" value=1>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="form-footer" style="text-align:right">
+                          	  <button type="button" class="btn btn-default" onclick="formReset();">Reset</button>
+                          	  &nbsp;
+				        	  <button type="button" class="btn btn-theme" onclick="addCunstomer();">Submit</button>
+                          </div>
+                      </form>
+                  </div>
+          		</div><!-- col-lg-12-->      	
+          	</div><!-- /row -->
+
+		</section><! --/wrapper -->
+      </section><!-- /MAIN CONTENT -->
+
+      <!--main content end-->
+  </section>
+
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.ui.touch-punch.min.js}"></script>
+    <script class="include" type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.dcjqaccordion.2.7.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.scrollTo.min.js}"></script>
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.nicescroll.js}" type="text/javascript"></script>
+
+
+    <!--common script for all pages-->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/common-scripts.js}"></script>
+
+    <!--script for this page-->
+    <script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery-ui-1.9.2.custom.min.js}"></script>
+
+	<!--custom switch-->
+	<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap-switch.js}"></script>
+	
+	<!--custom tagsinput-->
+	<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/jquery.tagsinput.js}"></script>
+	
+	<!--custom checkbox & radio-->
+		
+	<script type="text/javascript" th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/bootstrap-inputmask/bootstrap-inputmask.min.js}"></script>
+	
+	
+	<script th:src="@{/Resources/dashgumfree_v2/Theme/assets/js/form-component.js}"></script>    
+    
+    <script th:src="@{/js/layer.js}"></script>
+    <script type="text/javascript">
+    // add a new customer to the server
+    function addCunstomer(){
+    	var name = $("#name").val();
+    	var address = $("#address").val();
+    	var garments = gettableinfo();
+    	
+    	if(name == ""){
+        	return layer.msg('Company name can not be empty.', function(){});
+        }
+    	if(address == ""){
+        	return layer.msg('Company address can not be empty.', function(){});
+        }
+    	if(garments == "" || garments == null){
+        	return layer.msg('Laundry label can not be empty.', function(){});
+        }
+    	
+    	$.ajax({
+            cache: true,
+            type: "POST",
+            url:'company/add',
+            data:JSON.stringify(getParam()),
+            dataType:"text",
+            contentType : 'application/json;charset=utf-8',
+            async: false,
+            success: function(data) {
+                if(data=="success"){
+                    layer.msg('Save success.');
+                    formReset();
+                }else{
+                    layer.msg('Save fail.');
+                }
+            }
+        });
+    }
+    
+    function getParam(){
+    	var param={};
+    	param.name = $("#name").val();
+    	param.address = $("#address").val();
+    	if (document.getElementById("active").checked == false) {
+    		param.active = 0;
+    	} else {
+    		param.active = 1;
+    	}
+    	param.garmentsList = gettableinfo();
+    	return param;
+    }
+    
+    // reset the form
+    function formReset() {
+    	document.getElementById("name").value = "";
+    	document.getElementById("address").value = "";
+    	
+    	var table = $("#para_table");  
+        var tbody = table.children();  
+        var trs = tbody.children(); 
+        for(var i=1;i<trs.length;i++){
+        	trs[i].remove();
+        }
+        addtr();
+    }
+    
+    //get table infomation  
+    function gettableinfo(){ 
+        var table = $("#para_table");  
+        var tbody = table.children();  
+        var trs = tbody.children();  
+        var garmentsList = [];
+        for(var i=1;i<trs.length;i++){  
+            var tds = trs.eq(i).children();  
+            var garment = {};
+            for(var j=0;j<tds.length;j++){  
+                if(j==0){  
+                    if(tds.eq(j).text()==null||tds.eq(j).text()==""){  
+                        return null;  
+                    }  
+                    garment.fullname=tds.eq(j).text();
+                }  
+                if(j==1){  
+                    if(tds.eq(j).text()==null||tds.eq(j).text()==""){  
+                        return null;  
+                    }  
+                    garment.shortname=tds.eq(j).text();
+                }  
+            }
+            garmentsList.push(garment);
+        }   
+        return garmentsList;
+    }  
+      
+    function tdclick(tdobject){  
+        var td=$(tdobject);  
+        td.attr("onclick", "");  
+        var text=td.text();  
+        td.html("");  
+        var input=$("<input>");  
+        input.attr("value",text);  
+        input.bind("blur",function(){  
+            var inputnode=$(this);  
+            var inputtext=inputnode.val();  
+            var tdNode=inputnode.parent();  
+            tdNode.html(inputtext);  
+            tdNode.click(tdclick);  
+            td.attr("onclick", "tdclick(this)");  
+        });  
+        input.keyup(function(event){  
+            var myEvent =event||window.event;  
+            var kcode=myEvent.keyCode;  
+            if(kcode==13){  
+                var inputnode=$(this);  
+                var inputtext=inputnode.val();  
+                var tdNode=inputnode.parent();  
+                tdNode.html(inputtext);  
+                tdNode.click(tdclick);  
+            }  
+        });  
+      
+        td.append(input);  
+        var t =input.val();  
+        input.val("").focus().val(t);  
+      
+        td.unbind("click");  
+    }  
+    function addtr(){  
+        var table = $("#para_table");  
+        var tr= $("<tr>" +  
+            "<td  style='text-align:center;' onclick='tdclick(this)'>"+"</td>" +  
+            "<td  style='text-align:center;' onclick='tdclick(this)'>"+"</td>" +  
+            "<td  align='center' onclick='deletetr(this)'><button type='button'  class='btn btn-danger btn-xs'>"+"Delete"+"</button></td></tr>");  
+        table.append(tr);  
+    }  
+    function deletetr(tdobject){  
+        var td=$(tdobject);  
+        td.parents("tr").remove();  
+    }
+    </script>
+
+  </body>
+</html>
